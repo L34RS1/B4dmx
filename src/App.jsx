@@ -9,12 +9,7 @@ const projects = [
     title: 'Stand Interactivo',
     description: 'Durante la Expo Guadalajara 2024, nuestro stand interactivo fue galardonado con el primer lugar, destacando tanto por su diseño innovador como por la experiencia inmersiva que ofrecía a los visitantes. La instalación combinaba tecnología de punta con elementos interactivos que permitían a los asistentes explorar los productos de John Deere de manera única y memorable, creando una experiencia que destacó entre todas las propuestas presentadas.',
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    logoSvg: (
-      <svg width="120" height="40" viewBox="0 0 120 40" fill="none">
-        <rect width="120" height="40" rx="4" fill="#367C2B"/>
-        <text x="60" y="24" textAnchor="middle" fill="white" fontSize="14" fontWeight="bold">John Deere</text>
-      </svg>
-    )
+    logoPath: '/logojd.svg'
   },
   {
     id: 2,
@@ -22,12 +17,7 @@ const projects = [
     title: 'Experiencia Virtual',
     description: 'Desarrollamos una experiencia de realidad virtual que permite a los usuarios explorar los vehículos Tesla de manera inmersiva, destacando sus características tecnológicas más avanzadas. Los visitantes pueden personalizar su vehículo, explorar el interior y exterior, y experimentar las funciones autónomas en un entorno virtual completamente realista que los transporta al futuro de la movilidad.',
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-    logoSvg: (
-      <svg width="120" height="40" viewBox="0 0 120 40" fill="none">
-        <rect width="120" height="40" rx="4" fill="#CC0000"/>
-        <text x="60" y="24" textAnchor="middle" fill="white" fontSize="16" fontWeight="bold">TESLA</text>
-      </svg>
-    )
+    logoPath: '/logojd.svg'
   },
   {
     id: 3,
@@ -35,13 +25,7 @@ const projects = [
     title: 'Showcase Interactivo',
     description: 'Creamos un showcase interactivo para el lanzamiento del iPhone, combinando elementos físicos y digitales para crear una experiencia memorable para los asistentes. La instalación incluía hologramas, superficies táctiles y realidad aumentada para mostrar las características del producto de forma innovadora, estableciendo un nuevo estándar en presentaciones de productos tecnológicos.',
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    logoSvg: (
-      <svg width="120" height="40" viewBox="0 0 120 40" fill="none">
-        <rect width="120" height="40" rx="4" fill="#000000"/>
-        <circle cx="60" cy="20" r="12" fill="white"/>
-        <path d="M60 8 L60 32 M52 20 L68 20" stroke="black" strokeWidth="2"/>
-      </svg>
-    )
+    logoPath: '/logojd.svg'
   },
   {
     id: 4,
@@ -49,13 +33,7 @@ const projects = [
     title: 'Instalación Deportiva',
     description: 'Una instalación interactiva que combina sensores de movimiento y proyección mapping para crear una experiencia única donde los usuarios pueden interactuar con productos Nike. Los visitantes participan en desafíos deportivos virtuales mientras exploran la línea de productos, creando una conexión emocional con la marca y demostrando el poder de la tecnología aplicada al deporte.',
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-    logoSvg: (
-      <svg width="120" height="40" viewBox="0 0 120 40" fill="none">
-        <rect width="120" height="40" rx="4" fill="#FF6B35"/>
-        <path d="M20 25 Q40 15 60 20 Q80 25 100 15" stroke="white" strokeWidth="3" fill="none"/>
-        <text x="60" y="32" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">NIKE</text>
-      </svg>
-    )
+    logoPath: '/logojd.svg'
   }
 ];
 
@@ -163,7 +141,14 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
               style={{ animationDelay: '0.3s' }}
             >
               <div className="h-10 md:h-10 lg:h-12 xl:h-14 w-auto opacity-90">
-                {project.logoSvg}
+                <img 
+                  src={project.logoPath} 
+                  alt={`${project.brand} Logo`}
+                  className="h-full w-auto object-contain filter drop-shadow-lg"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
               </div>
             </div>
 
@@ -196,22 +181,29 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
         </div>
       )}
 
-      {/* Contenido normal (no expandido) - Mejorado para móviles */}
+      {/* Contenido normal (no expandido) - Mejorado posicionamiento */}
       {showContent && !isExpanded && (
-        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in pb-12 md:pb-6 lg:pb-8">
-          {/* Logo de la marca - Más grande en móviles */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in pb-20 md:pb-12 lg:pb-8 safe-area-bottom">
+          {/* Logo de la marca - Implementado con img */}
           <div 
             className="mb-4 md:mb-5 lg:mb-6 animate-slide-up"
             style={{ animationDelay: '0.2s' }}
           >
             <div className="h-8 md:h-8 lg:h-10 xl:h-12 w-auto opacity-90">
-              {project.logoSvg}
+              <img 
+                src={project.logoPath} 
+                alt={`${project.brand} Logo`}
+                className="h-full w-auto object-contain filter drop-shadow-lg"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                }}
+              />
             </div>
           </div>
 
-          {/* Título del proyecto - Ajustado para móviles */}
+          {/* Título del proyecto - Con más margen inferior */}
           <h3 
-            className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 md:mb-5 lg:mb-6 animate-slide-up leading-tight"
+            className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-6 md:mb-5 lg:mb-6 animate-slide-up leading-tight"
             style={{ 
               textShadow: '0 2px 4px rgba(0,0,0,0.3)',
               animationDelay: '0.3s'
@@ -220,20 +212,20 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
             {project.title}
           </h3>
 
-          {/* Descripción truncada - Optimizada para móviles */}
+          {/* Descripción truncada - Con más espacio y botón más visible */}
           <div
-            className="relative cursor-pointer text-content-area animate-slide-up mb-4"
+            className="relative cursor-pointer text-content-area animate-slide-up mb-6"
             style={{ animationDelay: '0.4s' }}
             onClick={handleExpandClick}
           >
-            <div className="relative overflow-hidden h-12 md:h-14">
+            <div className="relative overflow-hidden h-16 md:h-14 mb-2">
               <p 
                 className="text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed transition-colors duration-200 hover:text-white/80"
                 style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
               >
                 {project.description.split(' ').map((word, index, words) => {
                   const totalWords = words.length;
-                  const fadeStart = Math.floor(totalWords * 0.5); // Más texto visible en móviles
+                  const fadeStart = Math.floor(totalWords * 0.5);
                   let opacity = 1;
                   
                   if (index >= fadeStart) {
@@ -248,12 +240,12 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
                   );
                 })}
               </p>
-              <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
+              <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
             </div>
             
-            {/* Indicador de expansión */}
+            {/* Indicador de expansión - Más visible */}
             <button
-              className="text-green-400 text-xs md:text-sm mt-2 hover:text-green-300 transition-all duration-200 hover:scale-105 active:scale-95 animate-fade-in"
+              className="text-green-400 text-sm md:text-sm font-medium bg-black/30 px-3 py-2 rounded-full backdrop-blur-sm hover:text-green-300 hover:bg-black/50 transition-all duration-200 hover:scale-105 active:scale-95 animate-fade-in border border-green-400/30"
               style={{ 
                 textShadow: '0 1px 2px rgba(0,0,0,0.3)',
                 animationDelay: '0.8s'
@@ -506,27 +498,24 @@ const App = () => {
           }
           
           .safe-area-bottom {
-            padding-bottom: env(safe-area-inset-bottom, 20px);
+            padding-bottom: env(safe-area-inset-bottom, 30px);
           }
         }
       `}</style>
 
       {/* Header - Mejorado para móviles */}
       <header 
-        className={`absolute top-0 left-0 right-0 p-4 md:p-6 lg:p-8 pt-6 md:pt-6 lg:pt-8 transition-all duration-400 ${
+        className={`absolute top-0 left-0 right-0 p-4 md:p-6 lg:p-8 pt-6 md:pt-6 lg:pt-8 transition-all duration-400 safe-area-top ${
           expandedProject ? 'opacity-0 -translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'
         }`}
         style={{ zIndex: expandedProject ? 10 : 50 }}
       >
         <div className="flex items-center justify-between w-full">
-          {/* Logo B4D - Más grande en móviles */}
-          <div className={`text-green-400 text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold ${isLoaded ? 'animate-slide-up' : ''}`}>
-  <img 
-    src="/logo.svg" 
-    alt="B4D Logo" 
-    className="w-auto h-10 md:h-10 lg:h-12"
-  />
-</div>
+          <img 
+            src="/logo.svg" 
+            alt="B4D Logo" 
+            className="w-auto h-10 md:h-10 lg:h-12"
+          />
 
           {/* Botón de contacto - Ajustado para móviles */}
           <button
@@ -542,7 +531,7 @@ const App = () => {
 
       {/* Texto principal - Optimizado para móviles */}
       <div 
-        className={`absolute top-24 md:top-24 lg:top-28 left-4 right-4 md:left-6 md:right-auto lg:left-8 xl:left-12 max-w-full md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl transition-all duration-400 ${
+        className={`absolute top-24 md:top-24 lg:top-28 left-4 right-4 md:left-6 md:right-auto lg:left-8 xl:left-12 max-w-full md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl transition-all duration-400 safe-area-top ${
           expandedProject ? 'opacity-0 -translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'
         }`}
         style={{ zIndex: expandedProject ? 10 : 40 }}
