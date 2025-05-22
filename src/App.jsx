@@ -198,7 +198,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
 
       {/* Contenido normal (no expandido) - Mejorado para móviles */}
       {showContent && !isExpanded && (
-        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in pb-8 md:pb-6 lg:pb-8">
+        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in pb-12 md:pb-6 lg:pb-8">
           {/* Logo de la marca - Más grande en móviles */}
           <div 
             className="mb-4 md:mb-5 lg:mb-6 animate-slide-up"
@@ -222,7 +222,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
 
           {/* Descripción truncada - Optimizada para móviles */}
           <div
-            className="relative cursor-pointer text-content-area animate-slide-up"
+            className="relative cursor-pointer text-content-area animate-slide-up mb-4"
             style={{ animationDelay: '0.4s' }}
             onClick={handleExpandClick}
           >
@@ -513,7 +513,7 @@ const App = () => {
 
       {/* Header - Mejorado para móviles */}
       <header 
-        className={`absolute top-0 left-0 right-0 p-4 md:p-6 lg:p-8 safe-area-top transition-all duration-400 ${
+        className={`absolute top-0 left-0 right-0 p-4 md:p-6 lg:p-8 pt-6 md:pt-6 lg:pt-8 transition-all duration-400 ${
           expandedProject ? 'opacity-0 -translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'
         }`}
         style={{ zIndex: expandedProject ? 10 : 50 }}
@@ -542,13 +542,13 @@ const App = () => {
 
       {/* Texto principal - Optimizado para móviles */}
       <div 
-        className={`absolute top-20 md:top-24 lg:top-28 left-4 right-4 md:left-6 md:right-auto lg:left-8 xl:left-12 max-w-full md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl transition-all duration-400 safe-area-top ${
+        className={`absolute top-24 md:top-24 lg:top-28 left-4 right-4 md:left-6 md:right-auto lg:left-8 xl:left-12 max-w-full md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl transition-all duration-400 ${
           expandedProject ? 'opacity-0 -translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'
         }`}
         style={{ zIndex: expandedProject ? 10 : 40 }}
       >
         <div className={`text-white ${isLoaded ? 'animate-slide-up' : ''}`} style={{ animationDelay: '0.4s' }}>
-          <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-light mb-4 leading-tight"
+          <h1 className="text-3xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-light mb-4 leading-tight"
               style={{ textShadow: '0 2px 4px rgba(0,0,0,0.4)' }}>
             Creamos <span className="font-bold">productos</span> y{' '}
             <span className="font-bold">experiencias</span> inmersivas
