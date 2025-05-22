@@ -186,7 +186,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
         <div className="absolute bottom-6 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in pb-32 md:pb-20 lg:pb-8 safe-area-bottom">
           {/* Logo de la marca */}
           <div 
-            className="mb-4 md:mb-5 lg:mb-6 animate-slide-up"
+            className="mb-10 md:mb-5 lg:mb-6 animate-slide-up"
             style={{ animationDelay: '0.2s' }}
           >
             <div className="h-8 md:h-8 lg:h-10 xl:h-12 w-auto opacity-90">
@@ -533,7 +533,7 @@ const App = () => {
 
       {/* Texto principal */}
       <div 
-        className={`absolute top-32 md:top-28 lg:top-32 left-4 right-4 md:left-6 md:right-auto lg:left-8 xl:left-12 max-w-full md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl transition-all duration-400 safe-area-top ${
+        className={`absolute top-12 md:top-28 lg:top-32 left-4 right-4 md:left-6 md:right-auto lg:left-8 xl:left-12 max-w-full md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl transition-all duration-400 safe-area-top ${
           expandedProject ? 'opacity-0 -translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'
         }`}
         style={{ zIndex: expandedProject ? 10 : 40 }}
