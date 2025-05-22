@@ -183,7 +183,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
 
       {/* Contenido normal (no expandido) - Mejorado posicionamiento */}
       {showContent && !isExpanded && (
-        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in pb-20 md:pb-12 lg:pb-8 safe-area-bottom">
+        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in pb-32 md:pb-16 lg:pb-12 safe-area-bottom">
           {/* Logo de la marca - Implementado con img */}
           <div 
             className="mb-4 md:mb-5 lg:mb-6 animate-slide-up"
@@ -201,9 +201,9 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
             </div>
           </div>
 
-          {/* Título del proyecto - Con más margen inferior */}
+          {/* Título del proyecto - Con menos margen inferior */}
           <h3 
-            className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-6 md:mb-5 lg:mb-6 animate-slide-up leading-tight"
+            className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-3 md:mb-4 lg:mb-5 animate-slide-up leading-tight"
             style={{ 
               textShadow: '0 2px 4px rgba(0,0,0,0.3)',
               animationDelay: '0.3s'
@@ -212,13 +212,13 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
             {project.title}
           </h3>
 
-          {/* Descripción truncada - Con más espacio y botón más visible */}
+          /* Descripción truncada - Con más espacio y botón más visible */}
           <div
-            className="relative cursor-pointer text-content-area animate-slide-up mb-6"
+            className="relative cursor-pointer text-content-area animate-slide-up mb-8"
             style={{ animationDelay: '0.4s' }}
             onClick={handleExpandClick}
           >
-            <div className="relative overflow-hidden h-16 md:h-14 mb-2">
+            <div className="relative overflow-hidden h-20 md:h-16 mb-4">
               <p 
                 className="text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed transition-colors duration-200 hover:text-white/80"
                 style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
@@ -240,12 +240,12 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
                   );
                 })}
               </p>
-              <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+              <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
             </div>
             
-            {/* Indicador de expansión - Más visible */}
+            {/* Indicador de expansión - Más visible y con mejor posicionamiento */}
             <button
-              className="text-green-400 text-sm md:text-sm font-medium bg-black/30 px-3 py-2 rounded-full backdrop-blur-sm hover:text-green-300 hover:bg-black/50 transition-all duration-200 hover:scale-105 active:scale-95 animate-fade-in border border-green-400/30"
+              className="text-green-400 text-sm md:text-sm font-medium bg-black/40 px-4 py-3 rounded-full backdrop-blur-sm hover:text-green-300 hover:bg-black/60 transition-all duration-200 hover:scale-105 active:scale-95 animate-fade-in border border-green-400/40 shadow-lg"
               style={{ 
                 textShadow: '0 1px 2px rgba(0,0,0,0.3)',
                 animationDelay: '0.8s'
@@ -494,18 +494,18 @@ const App = () => {
         /* Mejoras específicas para móviles */
         @media (max-width: 640px) {
           .safe-area-top {
-            padding-top: env(safe-area-inset-top, 20px);
+            padding-top: env(safe-area-inset-top, 24px);
           }
           
           .safe-area-bottom {
-            padding-bottom: env(safe-area-inset-bottom, 30px);
+            padding-bottom: env(safe-area-inset-bottom, 40px);
           }
         }
       `}</style>
 
       {/* Header - Mejorado para móviles */}
       <header 
-        className={`absolute top-0 left-0 right-0 p-4 md:p-6 lg:p-8 pt-6 md:pt-6 lg:pt-8 transition-all duration-400 safe-area-top ${
+        className={`absolute top-0 left-0 right-0 p-4 md:p-6 lg:p-8 pt-12 md:pt-8 lg:pt-8 transition-all duration-400 safe-area-top ${
           expandedProject ? 'opacity-0 -translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'
         }`}
         style={{ zIndex: expandedProject ? 10 : 50 }}
@@ -531,7 +531,7 @@ const App = () => {
 
       {/* Texto principal - Optimizado para móviles */}
       <div 
-        className={`absolute top-24 md:top-24 lg:top-28 left-4 right-4 md:left-6 md:right-auto lg:left-8 xl:left-12 max-w-full md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl transition-all duration-400 safe-area-top ${
+        className={`absolute top-32 md:top-28 lg:top-32 left-4 right-4 md:left-6 md:right-auto lg:left-8 xl:left-12 max-w-full md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl transition-all duration-400 safe-area-top ${
           expandedProject ? 'opacity-0 -translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'
         }`}
         style={{ zIndex: expandedProject ? 10 : 40 }}
