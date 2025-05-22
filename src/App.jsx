@@ -183,7 +183,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
 
       {/* Contenido normal (no expandido) */}
       {showContent && !isExpanded && (
-        <div className="absolute bottom-10 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in pb-32 md:pb-20 lg:pb-8 safe-area-bottom">
+        <div className="absolute bottom-14 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in pb-32 md:pb-20 lg:pb-8 safe-area-bottom">
           {/* Logo de la marca */}
           <div 
             className="mb-10 md:mb-5 lg:mb-6 animate-slide-up"
