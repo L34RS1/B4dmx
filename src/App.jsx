@@ -59,8 +59,6 @@ const projects = [
   }
 ];
 
-
-
 // Componente VideoCard
 const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting }) => {
   const [showContent, setShowContent] = useState(false);
@@ -69,7 +67,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
     if (isActive && !isExiting) {
       const timer = setTimeout(() => {
         setShowContent(true);
-      }, 700);
+      }, 500); // Reducido de 700ms a 500ms
       return () => clearTimeout(timer);
     } else {
       setShowContent(false);
@@ -85,7 +83,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
     overflow: 'hidden',
     transform: isExiting ? 'scale(0.85) translateX(-15%)' : 'scale(1) translateX(0%)',
     opacity: isExiting ? 0 : 1,
-    transition: 'all 0.7s cubic-bezier(0.25, 0.1, 0.25, 1)'
+    transition: 'all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1)' // Reducido de 0.7s a 0.5s
   };
 
   const handleExpandClick = (e) => {
@@ -161,17 +159,17 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
           >
             {/* Logo de la marca */}
             <div 
-              className="mb-8 md:mb-10 lg:mb-12 mt-12 md:mt-16 animate-slide-up"
+              className="mb-6 md:mb-8 lg:mb-10 mt-16 md:mt-16 animate-slide-up"
               style={{ animationDelay: '0.3s' }}
             >
-              <div className="h-8 md:h-10 lg:h-12 xl:h-14 w-auto opacity-90">
+              <div className="h-10 md:h-10 lg:h-12 xl:h-14 w-auto opacity-90">
                 {project.logoSvg}
               </div>
             </div>
 
             {/* Título del proyecto */}
             <h3 
-              className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-8 md:mb-10 lg:mb-12 text-white animate-slide-up"
+              className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-6 md:mb-8 lg:mb-10 text-white animate-slide-up"
               style={{ 
                 textShadow: '0 2px 4px rgba(0,0,0,0.3)',
                 animationDelay: '0.4s'
@@ -198,22 +196,22 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
         </div>
       )}
 
-      {/* Contenido normal (no expandido) */}
+      {/* Contenido normal (no expandido) - Mejorado para móviles */}
       {showContent && !isExpanded && (
-        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in">
-          {/* Logo de la marca */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in pb-8 md:pb-6 lg:pb-8">
+          {/* Logo de la marca - Más grande en móviles */}
           <div 
-            className="mb-5 md:mb-6 lg:mb-8 animate-slide-up"
+            className="mb-4 md:mb-5 lg:mb-6 animate-slide-up"
             style={{ animationDelay: '0.2s' }}
           >
-            <div className="h-6 md:h-8 lg:h-10 xl:h-12 w-auto opacity-90">
+            <div className="h-8 md:h-8 lg:h-10 xl:h-12 w-auto opacity-90">
               {project.logoSvg}
             </div>
           </div>
 
-          {/* Título del proyecto */}
+          {/* Título del proyecto - Ajustado para móviles */}
           <h3 
-            className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-5 md:mb-6 lg:mb-8 animate-slide-up"
+            className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 md:mb-5 lg:mb-6 animate-slide-up leading-tight"
             style={{ 
               textShadow: '0 2px 4px rgba(0,0,0,0.3)',
               animationDelay: '0.3s'
@@ -222,20 +220,20 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
             {project.title}
           </h3>
 
-          {/* Descripción truncada */}
+          {/* Descripción truncada - Optimizada para móviles */}
           <div
             className="relative cursor-pointer text-content-area animate-slide-up"
             style={{ animationDelay: '0.4s' }}
             onClick={handleExpandClick}
           >
-            <div className="relative overflow-hidden h-14">
+            <div className="relative overflow-hidden h-12 md:h-14">
               <p 
                 className="text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed transition-colors duration-200 hover:text-white/80"
                 style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
               >
                 {project.description.split(' ').map((word, index, words) => {
                   const totalWords = words.length;
-                  const fadeStart = Math.floor(totalWords * 0.6);
+                  const fadeStart = Math.floor(totalWords * 0.5); // Más texto visible en móviles
                   let opacity = 1;
                   
                   if (index >= fadeStart) {
@@ -292,17 +290,17 @@ const VideoCarousel = ({ expandedProject, onExpandChange }) => {
     setTimeout(() => {
       setCurrentIndex(newIndex);
       setIsTransitioning(false);
-    }, 700);
+    }, 500); // Reducido de 700ms a 500ms
   }, [isTransitioning, expandedProject]);
 
-  // Auto-advance del carrusel
+  // Auto-advance del carrusel - Reducido a 9 segundos
   useEffect(() => {
     if (!isAutoPlaying || expandedProject || isTransitioning) return;
 
     const interval = setInterval(() => {
       const newIndex = (currentIndex + 1) % projects.length;
       changeSlide(newIndex);
-    }, 11000);
+    }, 9000); // Reducido de 11000ms a 9000ms (2 segundos menos)
 
     return () => clearInterval(interval);
   }, [currentIndex, isAutoPlaying, expandedProject, isTransitioning, changeSlide]);
@@ -498,42 +496,53 @@ const App = () => {
         }
         
         .animate-slide-in {
-          animation: slide-in 0.7s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+          animation: slide-in 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+        }
+        
+        /* Mejoras específicas para móviles */
+        @media (max-width: 640px) {
+          .safe-area-top {
+            padding-top: env(safe-area-inset-top, 20px);
+          }
+          
+          .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+          }
         }
       `}</style>
 
-      {/* Header */}
+      {/* Header - Mejorado para móviles */}
       <header 
-        className={`absolute top-0 left-0 right-0 p-4 md:p-6 lg:p-8 transition-all duration-400 ${
+        className={`absolute top-0 left-0 right-0 p-4 md:p-6 lg:p-8 safe-area-top transition-all duration-400 ${
           expandedProject ? 'opacity-0 -translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'
         }`}
         style={{ zIndex: expandedProject ? 10 : 50 }}
       >
         <div className="flex items-center justify-between w-full">
-          {/* Logo BYD */}
-          <div className={`text-green-400 text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold ${isLoaded ? 'animate-slide-up' : ''}`}>
-            <svg width="80" height="32" viewBox="0 0 80 32" fill="none" className="w-auto h-8 md:h-10 lg:h-12">
+          {/* Logo BYD - Más grande en móviles */}
+          <div className={`text-green-400 text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold ${isLoaded ? 'animate-slide-up' : ''}`}>
+            <svg width="80" height="32" viewBox="0 0 80 32" fill="none" className="w-auto h-10 md:h-10 lg:h-12">
               <text x="40" y="20" textAnchor="middle" fill="currentColor" fontSize="18" fontWeight="bold" fontFamily="Inter, sans-serif">
                 byd.
               </text>
             </svg>
           </div>
 
-          {/* Botón de contacto */}
+          {/* Botón de contacto - Ajustado para móviles */}
           <button
             onClick={handleContactClick}
             className={`flex items-center gap-2 px-4 py-2 md:px-5 md:py-3 lg:px-6 lg:py-3 bg-transparent border border-white/30 rounded-full text-white hover:bg-white/10 transition-all duration-300 backdrop-blur-sm text-sm md:text-base hover:scale-105 active:scale-95 ${isLoaded ? 'animate-slide-up' : ''}`}
             style={{ animationDelay: '0.2s' }}
           >
-            <MessageCircle className="w-5 h-5" />
-            <span>Contacto</span>
+            <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
+            <span className="text-sm md:text-base">Contacto</span>
           </button>
         </div>
       </header>
 
-      {/* Texto principal */}
+      {/* Texto principal - Optimizado para móviles */}
       <div 
-        className={`absolute top-20 md:top-24 lg:top-28 left-4 md:left-6 lg:left-8 xl:left-12 max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl transition-all duration-400 ${
+        className={`absolute top-20 md:top-24 lg:top-28 left-4 right-4 md:left-6 md:right-auto lg:left-8 xl:left-12 max-w-full md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl transition-all duration-400 safe-area-top ${
           expandedProject ? 'opacity-0 -translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'
         }`}
         style={{ zIndex: expandedProject ? 10 : 40 }}
