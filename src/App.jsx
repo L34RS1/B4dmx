@@ -186,7 +186,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
         <div className="absolute bottom-14 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in pb-32 md:pb-20 lg:pb-8 safe-area-bottom">
           {/* Logo de la marca */}
           <div 
-            className="mb-10 md:mb-5 lg:mb-6 animate-slide-up"
+            className="mb-4 md:mb-5 lg:mb-6 animate-slide-up"
             style={{ animationDelay: '0.2s' }}
           >
             <div className="h-8 md:h-8 lg:h-10 xl:h-12 w-auto opacity-90">
@@ -218,7 +218,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
             style={{ animationDelay: '0.4s' }}
             onClick={handleExpandClick}
           >
-            <div className="relative overflow-hidden h-20 md:h-14 mb-4">
+            <div className="relative overflow-hidden h-13 md:h-14 mb-4">
               <p 
                 className="text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed transition-colors duration-200 hover:text-white/80"
                 style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
