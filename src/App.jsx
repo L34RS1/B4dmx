@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MessageCircle, ChevronDown } from 'lucide-react';
-import logo from '../assets/logo.svg'; // ajusta la ruta según tu estructura
 
 // Datos de ejemplo para los proyectos
 const projects = [
@@ -523,7 +522,8 @@ const App = () => {
           {/* Logo B4D - Más grande en móviles */}
           <div className={`text-green-400 text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold ${isLoaded ? 'animate-slide-up' : ''}`}>
   <img 
-    src={logo} alt="B4D Logo"
+    src="/logo.svg" 
+    alt="B4D Logo" 
     className="w-auto h-10 md:h-10 lg:h-12"
   />
 </div>
