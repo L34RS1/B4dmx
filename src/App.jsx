@@ -519,14 +519,14 @@ const App = () => {
         style={{ zIndex: expandedProject ? 10 : 50 }}
       >
         <div className="flex items-center justify-between w-full">
-          {/* Logo BYD - Más grande en móviles */}
+          {/* Logo B4D - Más grande en móviles */}
           <div className={`text-green-400 text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold ${isLoaded ? 'animate-slide-up' : ''}`}>
-            <svg width="80" height="32" viewBox="0 0 80 32" fill="none" className="w-auto h-10 md:h-10 lg:h-12">
-              <text x="40" y="20" textAnchor="middle" fill="currentColor" fontSize="18" fontWeight="bold" fontFamily="Inter, sans-serif">
-                byd.
-              </text>
-            </svg>
-          </div>
+  <img 
+    src="/assets/logo.svg" 
+    alt="B4D Logo" 
+    className="w-auto h-10 md:h-10 lg:h-12"
+  />
+</div>
 
           {/* Botón de contacto - Ajustado para móviles */}
           <button
