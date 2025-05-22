@@ -181,15 +181,14 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
         </div>
       )}
 
-      {/* Contenido normal (no expandido) */}
+      {/* Contenido normal (no expandido) - VERSIÓN MODIFICADA */}
       {showContent && !isExpanded && (
-        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in pb-32 md:pb-20 lg:pb-8 safe-area-bottom">
-          {/* Logo de la marca */}
-          <div 
-            className="mb-4 md:mb-5 lg:mb-6 animate-slide-up"
-            style={{ animationDelay: '0.2s' }}
-          >
-            <div className="h-8 md:h-8 lg:h-10 xl:h-12 w-auto opacity-90">
+        <div className="absolute inset-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in safe-area-bottom">
+          {/* Encabezado con logo y botón "Ver más" */}
+          <div className="flex justify-between items-start w-full">
+            {/* Logo de la marca */}
+            <div className="h-8 md:h-8 lg:h-10 xl:h-12 w-auto opacity-90 animate-slide-up"
+                 style={{ animationDelay: '0.2s' }}>
               <img 
                 src={project.logoPath} 
                 alt={`${project.brand} Logo`}
@@ -199,61 +198,51 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
                 }}
               />
             </div>
-          </div>
 
-          {/* Título del proyecto */}
-          <h3 
-            className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 md:mb-5 lg:mb-6 animate-slide-up leading-tight"
-            style={{ 
-              textShadow: '0 2px 4px rgba(0,0,0,0.3)',
-              animationDelay: '0.3s'
-            }}
-          >
-            {project.title}
-          </h3>
-
-          {/* Descripción truncada */}
-          <div
-            className="relative cursor-pointer text-content-area animate-slide-up mb-6"
-            style={{ animationDelay: '0.4s' }}
-            onClick={handleExpandClick}
-          >
-            <div className="relative overflow-hidden h-20 md:h-14 mb-4">
-              <p 
-                className="text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed transition-colors duration-200 hover:text-white/80"
-                style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
-              >
-                {project.description.split(' ').map((word, index, words) => {
-                  const totalWords = words.length;
-                  const fadeStart = Math.floor(totalWords * 0.5);
-                  let opacity = 1;
-                  
-                  if (index >= fadeStart) {
-                    const fadeProgress = (index - fadeStart) / (totalWords - fadeStart);
-                    opacity = Math.max(0.1, 1 - (fadeProgress * 0.9));
-                  }
-                  
-                  return (
-                    <span key={index} style={{ opacity }}>
-                      {word}{index < words.length - 1 ? ' ' : ''}
-                    </span>
-                  );
-                })}
-              </p>
-              <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
-            </div>
-            
-            {/* Indicador de expansión */}
+            {/* Botón "Ver más" ahora en la esquina superior derecha */}
             <button
-              className="text-green-400 text-sm md:text-sm font-medium bg-black/30 px-3 py-2 rounded-full backdrop-blur-sm hover:text-green-300 hover:bg-black/50 transition-all duration-200 hover:scale-105 active:scale-95 animate-fade-in border border-green-400/30"
+              onClick={handleExpandClick}
+              className="text-green-400 text-xs md:text-sm font-medium bg-black/30 px-3 py-1.5 md:px-4 md:py-2 rounded-full backdrop-blur-sm hover:text-green-300 hover:bg-black/50 transition-all duration-200 hover:scale-105 active:scale-95 animate-fade-in border border-green-400/30"
               style={{ 
                 textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-                animationDelay: '0.8s'
+                animationDelay: '0.3s',
+                marginTop: '0.25rem',
+                marginRight: '0.25rem'
               }}
-              onClick={handleExpandClick}
             >
               ↓ Ver más
             </button>
+          </div>
+
+          {/* Contenido inferior */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 pb-20 md:pb-20 lg:pb-8">
+            {/* Título del proyecto */}
+            <h3 
+              className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-3 md:mb-4 lg:mb-5 animate-slide-up leading-tight"
+              style={{ 
+                textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                animationDelay: '0.4s'
+              }}
+            >
+              {project.title}
+            </h3>
+
+            {/* Descripción MUY truncada */}
+            <div
+              className="relative cursor-pointer animate-slide-up"
+              style={{ animationDelay: '0.5s' }}
+              onClick={handleExpandClick}
+            >
+              <div className="relative overflow-hidden max-h-12 md:max-h-14">
+                <p 
+                  className="text-sm md:text-base lg:text-lg leading-relaxed text-white/90 line-clamp-2"
+                  style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
+                >
+                  {project.description.split('.').shift() + '.'}
+                </p>
+                <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+              </div>
+            </div>
           </div>
         </div>
       )}
