@@ -45,7 +45,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
     if (isActive && !isExiting) {
       const timer = setTimeout(() => {
         setShowContent(true);
-      }, 500); // Reducido de 700ms a 500ms
+      }, 500);
       return () => clearTimeout(timer);
     } else {
       setShowContent(false);
@@ -61,7 +61,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
     overflow: 'hidden',
     transform: isExiting ? 'scale(0.85) translateX(-15%)' : 'scale(1) translateX(0%)',
     opacity: isExiting ? 0 : 1,
-    transition: 'all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1)' // Reducido de 0.7s a 0.5s
+    transition: 'all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1)'
   };
 
   const handleExpandClick = (e) => {
@@ -181,10 +181,10 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
         </div>
       )}
 
-      {/* Contenido normal (no expandido) - Mejorado posicionamiento */}
+      {/* Contenido normal (no expandido) */}
       {showContent && !isExpanded && (
-        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in pb-32 md:pb-16 lg:pb-12 safe-area-bottom">
-          {/* Logo de la marca - Implementado con img */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in pb-32 md:pb-20 lg:pb-8 safe-area-bottom">
+          {/* Logo de la marca */}
           <div 
             className="mb-4 md:mb-5 lg:mb-6 animate-slide-up"
             style={{ animationDelay: '0.2s' }}
@@ -201,9 +201,9 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
             </div>
           </div>
 
-          {/* Título del proyecto - Con más margen inferior */}
+          {/* Título del proyecto */}
           <h3 
-            className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-3 md:mb-4 lg:mb-5 animate-slide-up leading-tight"
+            className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 md:mb-5 lg:mb-6 animate-slide-up leading-tight"
             style={{ 
               textShadow: '0 2px 4px rgba(0,0,0,0.3)',
               animationDelay: '0.3s'
@@ -212,20 +212,20 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
             {project.title}
           </h3>
 
-          {/* Descripción truncada - Con más espacio y botón más visible */}
+          {/* Descripción truncada */}
           <div
             className="relative cursor-pointer text-content-area animate-slide-up mb-6"
             style={{ animationDelay: '0.4s' }}
             onClick={handleExpandClick}
           >
-            <div className="relative overflow-hidden h-20 md:h-16 mb-4">
+            <div className="relative overflow-hidden h-20 md:h-14 mb-4">
               <p 
                 className="text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed transition-colors duration-200 hover:text-white/80"
                 style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
               >
                 {project.description.split(' ').map((word, index, words) => {
                   const totalWords = words.length;
-                  const fadeStart = Math.floor(totalWords * 0.4);
+                  const fadeStart = Math.floor(totalWords * 0.5);
                   let opacity = 1;
                   
                   if (index >= fadeStart) {
@@ -240,12 +240,12 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
                   );
                 })}
               </p>
-              <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
+              <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
             </div>
             
-            {/* Indicador de expansión - Más visible */}
+            {/* Indicador de expansión */}
             <button
-              className="text-green-400 text-sm md:text-sm font-medium bg-black/40 px-4 py-2.5 rounded-full backdrop-blur-sm hover:text-green-300 hover:bg-black/60 transition-all duration-200 hover:scale-105 active:scale-95 animate-fade-in border border-green-400/30"
+              className="text-green-400 text-sm md:text-sm font-medium bg-black/30 px-3 py-2 rounded-full backdrop-blur-sm hover:text-green-300 hover:bg-black/50 transition-all duration-200 hover:scale-105 active:scale-95 animate-fade-in border border-green-400/30"
               style={{ 
                 textShadow: '0 1px 2px rgba(0,0,0,0.3)',
                 animationDelay: '0.8s'
@@ -282,22 +282,20 @@ const VideoCarousel = ({ expandedProject, onExpandChange }) => {
     setTimeout(() => {
       setCurrentIndex(newIndex);
       setIsTransitioning(false);
-    }, 500); // Reducido de 700ms a 500ms
+    }, 500);
   }, [isTransitioning, expandedProject]);
 
-  // Auto-advance del carrusel - Reducido a 9 segundos
   useEffect(() => {
     if (!isAutoPlaying || expandedProject || isTransitioning) return;
 
     const interval = setInterval(() => {
       const newIndex = (currentIndex + 1) % projects.length;
       changeSlide(newIndex);
-    }, 9000); // Reducido de 11000ms a 9000ms (2 segundos menos)
+    }, 9000);
 
     return () => clearInterval(interval);
   }, [currentIndex, isAutoPlaying, expandedProject, isTransitioning, changeSlide]);
 
-  // Manejo de touch/drag events
   const handleTouchStart = (e) => {
     if (expandedProject || isTransitioning) return;
     
@@ -494,23 +492,22 @@ const App = () => {
         /* Mejoras específicas para móviles */
         @media (max-width: 640px) {
           .safe-area-top {
-            padding-top: env(safe-area-inset-top, 20px);
+            padding-top: max(env(safe-area-inset-top, 20px), 20px);
           }
           
           .safe-area-bottom {
-            padding-bottom: env(safe-area-inset-bottom, 40px);
+            padding-bottom: max(env(safe-area-inset-bottom, 40px), 40px);
           }
           
-          /* Asegurar que el contenido no se oculte detrás del navegador móvil */
-          .content-bottom-padding {
-            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 120px);
+          body {
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
           }
         }
       `}</style>
 
-      {/* Header - Mejorado para móviles */}
+      {/* Header */}
       <header 
-        className={`absolute top-0 left-0 right-0 p-4 md:p-6 lg:p-8 pt-12 md:pt-8 lg:pt-8 transition-all duration-400 safe-area-top ${
+        className={`absolute top-0 left-0 right-0 p-4 md:p-6 lg:p-8 pt-8 md:pt-8 lg:pt-10 transition-all duration-400 safe-area-top ${
           expandedProject ? 'opacity-0 -translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'
         }`}
         style={{ zIndex: expandedProject ? 10 : 50 }}
@@ -522,7 +519,7 @@ const App = () => {
             className="w-auto h-10 md:h-10 lg:h-12"
           />
 
-          {/* Botón de contacto - Ajustado para móviles */}
+          {/* Botón de contacto */}
           <button
             onClick={handleContactClick}
             className={`flex items-center gap-2 px-4 py-2 md:px-5 md:py-3 lg:px-6 lg:py-3 bg-transparent border border-white/30 rounded-full text-white hover:bg-white/10 transition-all duration-300 backdrop-blur-sm text-sm md:text-base hover:scale-105 active:scale-95 ${isLoaded ? 'animate-slide-up' : ''}`}
@@ -534,9 +531,9 @@ const App = () => {
         </div>
       </header>
 
-      {/* Texto principal - Optimizado para móviles */}
+      {/* Texto principal */}
       <div 
-        className={`absolute top-32 md:top-24 lg:top-28 left-4 right-4 md:left-6 md:right-auto lg:left-8 xl:left-12 max-w-full md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl transition-all duration-400 safe-area-top ${
+        className={`absolute top-32 md:top-28 lg:top-32 left-4 right-4 md:left-6 md:right-auto lg:left-8 xl:left-12 max-w-full md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl transition-all duration-400 safe-area-top ${
           expandedProject ? 'opacity-0 -translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'
         }`}
         style={{ zIndex: expandedProject ? 10 : 40 }}
