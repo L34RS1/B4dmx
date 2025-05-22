@@ -181,7 +181,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
         </div>
       )}
 
-      {/* Contenido normal (no expandido) - Mejorado posicionamiento */}
+      {/* Contenido normal (no expandido) - Con más margen bottom para móviles */}
       {showContent && !isExpanded && (
         <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in pb-32 md:pb-16 lg:pb-12 safe-area-bottom">
           {/* Logo de la marca - Implementado con img */}
@@ -201,9 +201,9 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
             </div>
           </div>
 
-          {/* Título del proyecto - Con menos margen inferior */}
+          {/* Título del proyecto - Menos separación del párrafo */}
           <h3 
-            className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-3 md:mb-4 lg:mb-5 animate-slide-up leading-tight"
+            className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-3 md:mb-3 lg:mb-4 animate-slide-up leading-tight"
             style={{ 
               textShadow: '0 2px 4px rgba(0,0,0,0.3)',
               animationDelay: '0.3s'
@@ -212,7 +212,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
             {project.title}
           </h3>
 
-          /* Descripción truncada - Con más espacio y botón más visible */}
+          {/* Descripción truncada - Con fade más arriba y botón más visible */}
           <div
             className="relative cursor-pointer text-content-area animate-slide-up mb-8"
             style={{ animationDelay: '0.4s' }}
@@ -225,7 +225,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
               >
                 {project.description.split(' ').map((word, index, words) => {
                   const totalWords = words.length;
-                  const fadeStart = Math.floor(totalWords * 0.5);
+                  const fadeStart = Math.floor(totalWords * 0.4);
                   let opacity = 1;
                   
                   if (index >= fadeStart) {
@@ -240,12 +240,12 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting })
                   );
                 })}
               </p>
-              <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
+              <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
             </div>
             
-            {/* Indicador de expansión - Más visible y con mejor posicionamiento */}
+            {/* Indicador de expansión - Más separado del fade */}
             <button
-              className="text-green-400 text-sm md:text-sm font-medium bg-black/40 px-4 py-3 rounded-full backdrop-blur-sm hover:text-green-300 hover:bg-black/60 transition-all duration-200 hover:scale-105 active:scale-95 animate-fade-in border border-green-400/40 shadow-lg"
+              className="text-green-400 text-sm md:text-sm font-medium bg-black/40 px-4 py-2 rounded-full backdrop-blur-sm hover:text-green-300 hover:bg-black/60 transition-all duration-200 hover:scale-105 active:scale-95 animate-fade-in border border-green-400/30"
               style={{ 
                 textShadow: '0 1px 2px rgba(0,0,0,0.3)',
                 animationDelay: '0.8s'
@@ -491,7 +491,7 @@ const App = () => {
           animation: slide-in 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
         }
         
-        /* Mejoras específicas para móviles */
+        /* Mejoras específicas para móviles con más separación */
         @media (max-width: 640px) {
           .safe-area-top {
             padding-top: env(safe-area-inset-top, 24px);
@@ -503,7 +503,7 @@ const App = () => {
         }
       `}</style>
 
-      {/* Header - Mejorado para móviles */}
+      {/* Header - Con más separación del top */}
       <header 
         className={`absolute top-0 left-0 right-0 p-4 md:p-6 lg:p-8 pt-12 md:pt-8 lg:pt-8 transition-all duration-400 safe-area-top ${
           expandedProject ? 'opacity-0 -translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'
@@ -529,7 +529,7 @@ const App = () => {
         </div>
       </header>
 
-      {/* Texto principal - Optimizado para móviles */}
+      {/* Texto principal - Con mejor separación */}
       <div 
         className={`absolute top-32 md:top-28 lg:top-32 left-4 right-4 md:left-6 md:right-auto lg:left-8 xl:left-12 max-w-full md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl transition-all duration-400 safe-area-top ${
           expandedProject ? 'opacity-0 -translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'
