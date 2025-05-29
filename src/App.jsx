@@ -1,560 +1,398 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { MessageCircle, ChevronDown } from 'lucide-react';
+import { MessageCircle, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-// Datos de ejemplo para los proyectos
+// Data
 const projects = [
-  {
-    id: 1,
-    brand: 'John Deere',
-    title: 'Stand Interactivo',
-    description: 'Durante la Expo Guadalajara 2024, nuestro stand interactivo fue galardonado con el primer lugar, destacando tanto por su diseño innovador como por la experiencia inmersiva que ofrecía a los visitantes. La instalación combinaba tecnología de punta con elementos interactivos que permitían a los asistentes explorar los productos de John Deere de manera única y memorable, creando una experiencia que destacó entre todas las propuestas presentadas.',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    logoPath: '/logojd.svg'
-  },
-  {
-    id: 2,
-    brand: 'Tesla',
-    title: 'Experiencia Virtual',
-    description: 'Desarrollamos una experiencia de realidad virtual que permite a los usuarios explorar los vehículos Tesla de manera inmersiva, destacando sus características tecnológicas más avanzadas. Los visitantes pueden personalizar su vehículo, explorar el interior y exterior, y experimentar las funciones autónomas en un entorno virtual completamente realista que los transporta al futuro de la movilidad.',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-    logoPath: '/logojd.svg'
-  },
-  {
-    id: 3,
-    brand: 'Apple',
-    title: 'Showcase Interactivo',
-    description: 'Creamos un showcase interactivo para el lanzamiento del iPhone, combinando elementos físicos y digitales para crear una experiencia memorable para los asistentes. La instalación incluía hologramas, superficies táctiles y realidad aumentada para mostrar las características del producto de forma innovadora, estableciendo un nuevo estándar en presentaciones de productos tecnológicos.',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    logoPath: '/logojd.svg'
-  },
-  {
-    id: 4,
-    brand: 'Nike',
-    title: 'Instalación Deportiva',
-    description: 'Una instalación interactiva que combina sensores de movimiento y proyección mapping para crear una experiencia única donde los usuarios pueden interactuar con productos Nike. Los visitantes participan en desafíos deportivos virtuales mientras exploran la línea de productos, creando una conexión emocional con la marca y demostrando el poder de la tecnología aplicada al deporte.',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-    logoPath: '/logojd.svg'
-  }
+    {
+        id: 1,
+        brand: 'John Deere',
+        title: 'Stand Interactivo',
+        description: 'Durante la Expo Guadalajara 2024, nuestro stand interactivo fue galardonado con el primer lugar, destacando tanto por su diseño innovador como por la experiencia inmersiva que ofrecía a los visitantes. La instalación combinaba tecnología de punta con elementos interactivos que permitían a los asistentes explorar los productos de John Deere de manera única y memorable, creando una experiencia que destacó entre todas las propuestas presentadas.',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        logoPath: '/logojd.svg'
+    },
+    {
+        id: 2,
+        brand: 'Tesla',
+        title: 'Experiencia Virtual',
+        description: 'Desarrollamos una experiencia de realidad virtual que permite a los usuarios explorar los vehículos Tesla de manera inmersiva, destacando sus características tecnológicas más avanzadas. Los visitantes pueden personalizar su vehículo, explorar el interior y exterior, y experimentar las funciones autónomas en un entorno virtual completamente realista que los transporta al futuro de la movilidad.',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+        logoPath: '/logojd.svg'
+    },
+    {
+        id: 3,
+        brand: 'Apple',
+        title: 'Showcase Interactivo',
+        description: 'Creamos un showcase interactivo para el lanzamiento del iPhone, combinando elementos físicos y digitales para crear una experiencia memorable para los asistentes. La instalación incluía hologramas, superficies táctiles y realidad aumentada para mostrar las características del producto de forma innovadora, estableciendo un nuevo estándar en presentaciones de productos tecnológicos.',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        logoPath: '/logojd.svg'
+    },
+    {
+        id: 4,
+        brand: 'Nike',
+        title: 'Instalación Deportiva',
+        description: 'Una instalación interactiva que combina sensores de movimiento y proyección mapping para crear una experiencia única donde los usuarios pueden interactuar con productos Nike. Los visitantes participan en desafíos deportivos virtuales mientras exploran la línea de productos, creando una conexión emocional con la marca y demostrando el poder de la tecnología aplicada al deporte.',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+        logoPath: '/logojd.svg'
+    }
 ];
 
-// Componente VideoCard
-const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, isExiting }) => {
-  const [showContent, setShowContent] = useState(false);
+// Constants
+const PRIMARY_TEXT_COLOR = '#D8ECF1';
 
-  useEffect(() => {
-    if (isActive && !isExiting) {
-      const timer = setTimeout(() => {
-        setShowContent(true);
-      }, 500);
-      return () => clearTimeout(timer);
-    } else {
-      setShowContent(false);
-    }
-  }, [isActive, isExiting, project.id]);
+// Component: SplashScreen
+const SplashScreen = ({ onFinished, videoUrl }) => {
+    const [animateText, setAnimateText] = useState(false);
+    const splashRef = useRef(null);
 
-  const cardStyle = {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    overflow: 'hidden',
-    transform: isExiting ? 'scale(0.85) translateX(-15%)' : 'scale(1) translateX(0%)',
-    opacity: isExiting ? 0 : 1,
-    transition: 'all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1)'
-  };
+    useEffect(() => {
+        const textTimer = setTimeout(() => setAnimateText(true), 500);
+        const finishTimer = setTimeout(onFinished, 4500);
+        const handleInteraction = () => onFinished();
 
-  const handleExpandClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!isExiting && isActive) {
-      onExpandToggle(project.id);
-    }
-  };
+        const currentRef = splashRef.current;
+        if (currentRef) {
+            ['wheel', 'touchstart', 'click'].forEach(event =>
+                currentRef.addEventListener(event, handleInteraction, { passive: true, once: true })
+            );
+        }
+        return () => {
+            clearTimeout(textTimer);
+            clearTimeout(finishTimer);
+            if (currentRef) {
+                ['wheel', 'touchstart', 'click'].forEach(event =>
+                    currentRef.removeEventListener(event, handleInteraction)
+                );
+            }
+        };
+    }, [onFinished]);
 
-  const handleModalClick = (e) => {
-    const isTextArea = e.target.closest('p, h3, button') || 
-                      e.target.tagName === 'P' || 
-                      e.target.tagName === 'H3' || 
-                      e.target.tagName === 'BUTTON' ||
-                      e.target.tagName === 'svg' ||
-                      e.target.tagName === 'text' ||
-                      e.target.tagName === 'rect' ||
-                      e.target.tagName === 'circle' ||
-                      e.target.tagName === 'path';
-    
-    if (!isTextArea) {
-      onExpandToggle(project.id);
-    }
-  };
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
+    };
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+    };
+    const splashText = "Creamos experiencias digitales interactivas e inmersivas.";
+    const words = splashText.split(' ');
 
-  return (
-    <div style={cardStyle}>
-      {/* Video/Image de fondo */}
-      <div className="absolute inset-0 w-full h-full">
-        <video 
-          src={project.videoUrl} 
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.target.style.display = 'none';
-            const img = document.createElement('img');
-            img.src = `https://via.placeholder.com/800x600/1a1a1a/ffffff?text=${project.brand}`;
-            img.className = 'w-full h-full object-cover';
-            img.alt = project.brand;
-            e.target.parentNode.appendChild(img);
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-      </div>
-
-      {/* Modal expandido */}
-      {isExpanded && (
-        <div 
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm animate-fade-in"
-          style={{ zIndex: 100 }}
-          onClick={handleModalClick}
+    return (
+        <motion.div
+            ref={splashRef}
+            className="fixed inset-0 z-[1000] flex flex-col items-center justify-center bg-black cursor-pointer"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.5, ease: 'easeInOut' } }}
+            style={{ color: PRIMARY_TEXT_COLOR }}
         >
-          {/* Botón cerrar */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onExpandToggle(project.id);
-            }}
-            className="absolute top-4 right-4 md:top-6 md:right-6 lg:top-8 lg:right-8 flex items-center justify-center w-12 h-12 md:w-14 md:h-14 text-white hover:text-green-400 transition-all duration-300 rounded-full hover:bg-white/10 animate-slide-down"
-            style={{ zIndex: 110 }}
-          >
-            <ChevronDown className="w-7 h-7 md:w-8 md:h-8" />
-          </button>
-
-          {/* Contenido del modal */}
-          <div 
-            className="h-full w-full flex flex-col p-4 md:p-6 lg:p-8"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Logo de la marca */}
-            <div 
-              className="mb-6 md:mb-8 lg:mb-10 mt-16 md:mt-16 animate-slide-up"
-              style={{ animationDelay: '0.3s' }}
-            >
-              <div className="h-10 md:h-10 lg:h-12 xl:h-14 w-auto opacity-90">
-                <img 
-                  src={project.logoPath} 
-                  alt={`${project.brand} Logo`}
-                  className="h-full w-auto object-contain filter drop-shadow-lg"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Título del proyecto */}
-            <h3 
-              className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-6 md:mb-8 lg:mb-10 text-white animate-slide-up"
-              style={{ 
-                textShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                animationDelay: '0.4s'
-              }}
-            >
-              {project.title}
-            </h3>
-
-            {/* Descripción scrolleable */}
-            <div 
-              className="flex-1 overflow-hidden animate-slide-up"
-              style={{ animationDelay: '0.5s' }}
-            >
-              <div className="h-full overflow-y-auto pr-2">
-                <p 
-                  className="text-base md:text-lg lg:text-xl xl:text-2xl leading-relaxed text-white/90 pb-8"
-                  style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
-                >
-                  {project.description}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Contenido normal (no expandido) */}
-      {showContent && !isExpanded && (
-        <div className="absolute bottom-14 left-0 right-0 p-4 md:p-6 lg:p-8 text-white animate-fade-in pb-32 md:pb-20 lg:pb-8 safe-area-bottom">
-          {/* Logo de la marca */}
-          <div 
-            className="mb-4 md:mb-5 lg:mb-6 animate-slide-up"
-            style={{ animationDelay: '0.2s' }}
-          >
-            <div className="h-8 md:h-8 lg:h-10 xl:h-12 w-auto opacity-90">
-              <img 
-                src={project.logoPath} 
-                alt={`${project.brand} Logo`}
-                className="h-full w-auto object-contain filter drop-shadow-lg"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Título del proyecto */}
-          <h3 
-            className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 md:mb-5 lg:mb-6 animate-slide-up leading-tight"
-            style={{ 
-              textShadow: '0 2px 4px rgba(0,0,0,0.3)',
-              animationDelay: '0.3s'
-            }}
-          >
-            {project.title}
-          </h3>
-
-          {/* Descripción truncada */}
-          <div
-            className="relative cursor-pointer text-content-area animate-slide-up mb-6"
-            style={{ animationDelay: '0.4s' }}
-            onClick={handleExpandClick}
-          >
-            <div className="relative overflow-hidden h-13 md:h-14 mb-4">
-              <p 
-                className="text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed transition-colors duration-200 hover:text-white/80"
-                style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
-              >
-                {project.description.split(' ').map((word, index, words) => {
-                  const totalWords = words.length;
-                  const fadeStart = Math.floor(totalWords * 0.5);
-                  let opacity = 1;
-                  
-                  if (index >= fadeStart) {
-                    const fadeProgress = (index - fadeStart) / (totalWords - fadeStart);
-                    opacity = Math.max(0.1, 1 - (fadeProgress * 0.9));
-                  }
-                  
-                  return (
-                    <span key={index} style={{ opacity }}>
-                      {word}{index < words.length - 1 ? ' ' : ''}
-                    </span>
-                  );
-                })}
-              </p>
-              <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
-            </div>
-            
-            {/* Indicador de expansión */}
-            <button
-              className="text-green-400 text-sm md:text-sm font-medium bg-black/30 px-3 py-2 rounded-full backdrop-blur-sm hover:text-green-300 hover:bg-black/50 transition-all duration-200 hover:scale-105 active:scale-95 animate-fade-in border border-green-400/30"
-              style={{ 
-                textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-                animationDelay: '0.8s'
-              }}
-              onClick={handleExpandClick}
-            >
-              ↓ Ver más
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+            <video src={videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-30" />
+            <div className="absolute inset-0 bg-black/60" />
+            <AnimatePresence>
+                {animateText && (
+                    <motion.h1 className="relative z-10 text-4xl md:text-5xl lg:text-6xl font-light text-center max-w-4xl px-6 leading-tight" variants={containerVariants} initial="hidden" animate="visible" exit={{ opacity: 0 }}>
+                        {words.map((word, i) => (
+                            <motion.span key={i} variants={itemVariants} style={{ display: 'inline-block', marginRight: '0.6rem' }} className={word.toLowerCase().match(/digitales|interactivas|inmersivas/) ? "font-bold" : ""}>
+                                {word}
+                            </motion.span>
+                        ))}
+                    </motion.h1>
+                )}
+            </AnimatePresence>
+            {animateText && (
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 0.7, y: 0, transition: { delay: words.length * 0.1 + 1, duration: 0.8 } }} className="absolute bottom-16 text-sm flex flex-col items-center" style={{ color: PRIMARY_TEXT_COLOR }}>
+                    <span>Desliza o haz clic para continuar</span>
+                    <ChevronDown className="mt-1 h-5 w-5 animate-bounce" />
+                </motion.div>
+            )}
+        </motion.div>
+    );
 };
 
-// Componente VideoCarousel
-const VideoCarousel = ({ expandedProject, onExpandChange }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [nextIndex, setNextIndex] = useState(1);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const carouselRef = useRef(null);
-  const startX = useRef(0);
-  const currentX = useRef(0);
-  const isDragging = useRef(false);
-  const hasMoved = useRef(false);
+// Component: VideoCard
+const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextColor }) => {
+    const [showContent, setShowContent] = useState(false);
 
-  const changeSlide = useCallback((newIndex) => {
-    if (isTransitioning || expandedProject) return;
-    
-    setIsTransitioning(true);
-    setNextIndex(newIndex);
-    
-    setTimeout(() => {
-      setCurrentIndex(newIndex);
-      setIsTransitioning(false);
-    }, 500);
-  }, [isTransitioning, expandedProject]);
+    useEffect(() => {
+        if (isActive) {
+            const timer = setTimeout(() => setShowContent(true), isExpanded ? 100 : 500);
+            return () => clearTimeout(timer);
+        } else {
+            setShowContent(false);
+        }
+    }, [isActive, isExpanded, project.id]);
 
-  useEffect(() => {
-    if (!isAutoPlaying || expandedProject || isTransitioning) return;
+    const handleExpandClick = (e) => {
+        e.preventDefault(); e.stopPropagation();
+        if (isActive) onExpandToggle(project.id);
+    };
 
-    const interval = setInterval(() => {
-      const newIndex = (currentIndex + 1) % projects.length;
-      changeSlide(newIndex);
-    }, 9000);
+    const handleModalBackgroundClick = (e) => {
+        if (e.target === e.currentTarget) {
+            onExpandToggle(project.id);
+        }
+    };
 
-    return () => clearInterval(interval);
-  }, [currentIndex, isAutoPlaying, expandedProject, isTransitioning, changeSlide]);
+    const cardContentVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut", staggerChildren: 0.1, delayChildren: 0.2 } },
+    };
+    const itemVariants = {
+        hidden: { opacity: 0, y: 15 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+    };
 
-  const handleTouchStart = (e) => {
-    if (expandedProject || isTransitioning) return;
-    
-    const target = e.target;
-    const isTextContent = target.closest('.text-content-area') ||
-                         target.tagName === 'P' ||
-                         target.tagName === 'H3' ||
-                         target.tagName === 'BUTTON' ||
-                         target.closest('button') ||
-                         target.closest('svg');
-    
-    if (isTextContent) return;
-    
-    isDragging.current = true;
-    hasMoved.current = false;
-    startX.current = e.touches ? e.touches[0].clientX : e.clientX;
-  };
+    return (
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+            <video src={project.videoUrl} autoPlay muted loop playsInline className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; const img = document.createElement('img'); img.src = `https://via.placeholder.com/800x600/1a1a1a/${primaryTextColor.substring(1)}?text=${project.brand}`; img.className = 'w-full h-full object-cover'; img.alt = project.brand; e.target.parentNode.appendChild(img); }} />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
-  const handleTouchMove = (e) => {
-    if (!isDragging.current) return;
-    currentX.current = e.touches ? e.touches[0].clientX : e.clientX;
-    const diff = Math.abs(startX.current - currentX.current);
-    if (diff > 10) {
-      hasMoved.current = true;
-    }
-  };
+            <AnimatePresence>
+                {isExpanded && (
+                    <motion.div
+                        className="fixed inset-0 bg-black/70 backdrop-blur-lg flex flex-col"
+                        style={{ zIndex: 100, color: primaryTextColor }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1, transition: { duration: 0.4, ease: "easeOut" } }}
+                        exit={{ opacity: 0, transition: { duration: 0.3, ease: "easeIn" } }}
+                        onClick={handleModalBackgroundClick}
+                    >
+                        <motion.button
+                            onClick={(e) => { e.stopPropagation(); onExpandToggle(project.id); }}
+                            className="absolute top-4 right-4 md:top-6 md:right-6 lg:top-8 lg:right-8 flex items-center justify-center w-12 h-12 text-inherit rounded-full hover:bg-white/10"
+                            style={{ zIndex: 110 }}
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0, transition: { delay: 0.3, duration: 0.4 } }}
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                        >
+                            <ChevronDown className="w-7 h-7 md:w-8 md:h-8" />
+                        </motion.button>
 
-  const handleTouchEnd = () => {
-    if (!isDragging.current || !hasMoved.current) {
-      isDragging.current = false;
-      hasMoved.current = false;
-      return;
-    }
-    
-    isDragging.current = false;
-    
-    const diff = startX.current - currentX.current;
-    const threshold = 50;
-    
-    if (Math.abs(diff) > threshold) {
-      if (diff > 0) {
-        const newIndex = (currentIndex + 1) % projects.length;
-        changeSlide(newIndex);
-      } else {
-        const newIndex = (currentIndex - 1 + projects.length) % projects.length;
-        changeSlide(newIndex);
-      }
-    }
-    
-    hasMoved.current = false;
-  };
+                        <motion.div className="h-full w-full flex flex-col p-4 md:p-6 lg:p-8 pt-safe-top-modal overflow-hidden" onClick={(e) => e.stopPropagation()} variants={cardContentVariants} initial="hidden" animate="visible">
+                            <motion.div className="mb-6 md:mb-8 lg:mb-10 mt-16 md:mt-16" variants={itemVariants}>
+                                <div className="h-10 md:h-12 lg:h-14 w-auto opacity-90"><img src={project.logoPath} alt={`${project.brand} Logo`} className="h-full w-auto object-contain filter drop-shadow-lg" /></div>
+                            </motion.div>
+                            <motion.h3 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-6 md:mb-8 lg:mb-10" style={{ textShadow: '0 2px 6px rgba(0,0,0,0.5)' }} variants={itemVariants}>{project.title}</motion.h3>
+                            <motion.div className="flex-1 overflow-hidden" variants={itemVariants}>
+                                <div className="h-full overflow-y-auto pr-2 custom-scrollbar pb-12"><p className="text-base md:text-lg lg:text-xl xl:text-2xl leading-relaxed" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}>{project.description}</p></div>
+                            </motion.div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-  const handleExpandToggle = (projectId) => {
-    if (isTransitioning || projects[currentIndex].id !== projectId) return;
-    
-    if (expandedProject === projectId) {
-      onExpandChange(null);
-      setIsAutoPlaying(true);
-    } else {
-      onExpandChange(projectId);
-      setIsAutoPlaying(false);
-    }
-  };
-
-  return (
-    <div 
-      className="relative w-full h-screen overflow-hidden" 
-      ref={carouselRef}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      onMouseDown={handleTouchStart}
-      onMouseMove={handleTouchMove}
-      onMouseUp={handleTouchEnd}
-      onMouseLeave={handleTouchEnd}
-    >
-      <div className="relative w-full h-full">
-        {/* Slide actual */}
-        <VideoCard
-          key={`current-${currentIndex}`}
-          project={projects[currentIndex]}
-          isActive={true}
-          isExpanded={expandedProject === projects[currentIndex].id}
-          onExpandToggle={handleExpandToggle}
-          isExiting={isTransitioning}
-        />
-
-        {/* Slide entrante */}
-        {isTransitioning && (
-          <div
-            className="absolute inset-0 w-full h-full overflow-hidden animate-slide-in"
-          >
-            <div className="absolute inset-0 w-full h-full">
-              <video 
-                src={projects[nextIndex].videoUrl} 
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  const img = document.createElement('img');
-                  img.src = `https://via.placeholder.com/800x600/1a1a1a/ffffff?text=${projects[nextIndex].brand}`;
-                  img.className = 'w-full h-full object-cover';
-                  img.alt = projects[nextIndex].brand;
-                  e.target.parentNode.appendChild(img);
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+            <AnimatePresence>
+                {showContent && !isExpanded && (
+                    <motion.div
+                        className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 pb-[calc(env(safe-area-inset-bottom,20px)+100px)] text-inherit"
+                        variants={cardContentVariants} initial="hidden" animate="visible" exit={{ opacity: 0, y: 20, transition: { duration: 0.3 } }}
+                    >
+                        <motion.div className="mb-8 md:mb-10 lg:mb-12" variants={itemVariants}> {/* Increased margin-bottom */}
+                            <div className="h-8 md:h-10 lg:h-12 w-auto opacity-90"><img src={project.logoPath} alt={`${project.brand} Logo`} className="h-full w-auto object-contain filter drop-shadow-lg" /></div>
+                        </motion.div>
+                        <motion.h3 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-3 md:mb-4 lg:mb-5 leading-tight" style={{ textShadow: '0 2px 5px rgba(0,0,0,0.5)' }} variants={itemVariants}>{project.title}</motion.h3>
+                        <motion.div className="relative cursor-pointer text-content-area mb-0" variants={itemVariants} onClick={handleExpandClick}>
+                            <div className="relative overflow-hidden max-h-[4.2em] md:max-h-[4.5em] lg:max-h-[4.8em]">
+                                <p className="text-sm md:text-base lg:text-lg xl:text-xl leading-[1.35] text-gradient-blur">{project.description}</p>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
 };
 
-// Componente principal App
+// Component: VideoCarousel
+const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [direction, setDirection] = useState(0);
+    const carouselRef = useRef(null);
+    const autoPlayTimeoutRef = useRef(null);
+    const isTransitioningRef = useRef(false);
+    const dragStartX = useRef(0);
+    const isDragging = useRef(false);
+
+    const changeSlide = useCallback((newIndex, dir) => {
+        if (isTransitioningRef.current || expandedProject || newIndex === currentIndex) return;
+        clearTimeout(autoPlayTimeoutRef.current);
+        isTransitioningRef.current = true;
+        setDirection(dir);
+        setCurrentIndex(newIndex);
+        setTimeout(() => { isTransitioningRef.current = false; }, 700);
+    }, [expandedProject, currentIndex]);
+
+    useEffect(() => {
+        if (expandedProject || isTransitioningRef.current) {
+            clearTimeout(autoPlayTimeoutRef.current); return;
+        }
+        autoPlayTimeoutRef.current = setTimeout(() => {
+            changeSlide((currentIndex + 1) % projects.length, 1);
+        }, 9000);
+        return () => clearTimeout(autoPlayTimeoutRef.current);
+    }, [currentIndex, expandedProject, projects.length, changeSlide]);
+
+    const handleInteractionStart = (clientX) => {
+        if (expandedProject || isTransitioningRef.current) return false;
+        if (clientX === undefined || clientX === null) return false; // Add check for clientX
+        isDragging.current = true;
+        dragStartX.current = clientX;
+        clearTimeout(autoPlayTimeoutRef.current);
+        return true;
+    };
+    const handleInteractionEnd = (clientX) => {
+        if (!isDragging.current || expandedProject || isTransitioningRef.current) return;
+        if (clientX === undefined || clientX === null) return; // Add check for clientX
+        const diff = dragStartX.current - clientX;
+        const threshold = 50;
+        if (Math.abs(diff) > threshold) {
+            if (diff > 0) changeSlide((currentIndex + 1) % projects.length, 1);
+            else changeSlide((currentIndex - 1 + projects.length) % projects.length, -1);
+        }
+        isDragging.current = false;
+    };
+
+    const handleTouchStart = (e) => { if (e.target.closest('button, a, .text-content-area')) return; handleInteractionStart(e.touches?.[0]?.clientX); };
+    const handleTouchEnd = (e) => handleInteractionEnd(e.changedTouches?.[0]?.clientX);
+    const handleMouseDown = (e) => { if (e.target.closest('button, a, .text-content-area')) return; handleInteractionStart(e.clientX); };
+    const handleMouseUp = (e) => handleInteractionEnd(e.clientX);
+
+    const currentProject = projects?.[currentIndex];
+    const slideVariants = {
+        enter: dir => ({ x: dir > 0 ? '100%' : '-100%', scale: 0.95, opacity: 0 }),
+        center: { x: 0, scale: 1, opacity: 1, transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] } },
+        exit: dir => ({ x: dir < 0 ? '100%' : '-100%', scale: 0.95, opacity: 0, transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] } }),
+    };
+
+    const navButtonClass = "p-2 rounded-full bg-black/20 hover:bg-black/40 active:bg-black/50 transition-colors duration-150"; // Removed absolute, top, -translate-y, z-30 as they are now handled by parent flex container
+
+    return (
+        <div className="relative w-full h-screen overflow-hidden bg-black" ref={carouselRef} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseLeave={() => isDragging.current = false}>
+            <AnimatePresence initial={false} custom={direction} mode="popLayout">
+                <motion.div key={currentIndex} custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="w-full h-full absolute">
+                    {currentProject && <VideoCard project={currentProject} isActive={true} isExpanded={expandedProject === currentProject.id} onExpandToggle={onExpandChange} primaryTextColor={primaryTextColor} />}
+                </motion.div>
+            </AnimatePresence>
+
+            {!expandedProject && (
+                <div className="absolute bottom-[calc(env(safe-area-inset-bottom,0px)+20px)] left-0 right-0 flex items-center justify-between px-3 md:px-5 z-30"> {/* Adjusted padding */}
+                    <button onClick={() => { if (!isTransitioningRef.current) changeSlide((currentIndex - 1 + projects.length) % projects.length, -1); }} className={navButtonClass} aria-label="Anterior Caso de Éxito">
+                        <ChevronLeft size={28} style={{ color: primaryTextColor }} />
+                    </button>
+                    <div className="flex space-x-3"> {/* This is .slider-dots now */}
+                        {projects.map((_, index) => (
+                            <button key={index} aria-label={`Ver caso de éxito ${index + 1}`} className={`slider-dot ${currentIndex === index ? 'active' : ''}`}
+                                onClick={() => { if (!isTransitioningRef.current && index !== currentIndex) changeSlide(index, index > currentIndex ? 1 : -1); }} />
+                        ))}
+                    </div>
+                    <button onClick={() => { if (!isTransitioningRef.current) changeSlide((currentIndex + 1) % projects.length, 1); }} className={navButtonClass} aria-label="Siguiente Caso de Éxito">
+                        <ChevronRight size={28} style={{ color: primaryTextColor }} />
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
+
+// Component: App (Main)
 const App = () => {
-  const [expandedProject, setExpandedProject] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+    const [expandedProject, setExpandedProject] = useState(null);
+    const [showSplashScreen, setShowSplashScreen] = useState(true);
+    const [isAppLoaded, setIsAppLoaded] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
+    useEffect(() => {
+        if (!showSplashScreen) {
+            const timer = setTimeout(() => setIsAppLoaded(true), 50);
+            return () => clearTimeout(timer);
+        }
+    }, [showSplashScreen]);
 
-  const handleContactClick = () => {
-    const phoneNumber = '521234567890';
-    const message = encodeURIComponent('Hola, me interesa conocer más sobre sus servicios.');
-    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
-  };
+    const handleContactClick = () => {
+        window.open(`https://wa.me/521234567890?text=${encodeURIComponent('Hola, me interesa conocer más sobre sus servicios.')}`, '_blank');
+    };
+    const handleSplashFinished = useCallback(() => setShowSplashScreen(false), []);
+    const handleExpandProjectChange = useCallback((projectId) => {
+        setExpandedProject(prevId => (prevId === projectId ? null : projectId));
+    }, []);
 
-  return (
-    <>
-      <style jsx>{`
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        
-        @keyframes slide-up {
-          from { 
-            opacity: 0; 
-            transform: translateY(20px); 
-          }
-          to { 
-            opacity: 1; 
-            transform: translateY(0); 
-          }
-        }
-        
-        @keyframes slide-down {
-          from { 
-            opacity: 0; 
-            transform: translateY(-30px); 
-          }
-          to { 
-            opacity: 1; 
-            transform: translateY(0); 
-          }
-        }
-        
-        @keyframes slide-in {
-          from {
-            transform: scale(1.1) translateX(100%);
-          }
-          to {
-            transform: scale(1) translateX(0%);
-          }
-        }
-        
-        .animate-fade-in {
-          animation: fade-in 0.5s ease-out forwards;
-        }
-        
-        .animate-slide-up {
-          animation: slide-up 0.7s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-          opacity: 0;
-        }
-        
-        .animate-slide-down {
-          animation: slide-down 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-          opacity: 0;
-        }
-        
-        .animate-slide-in {
-          animation: slide-in 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-        }
-        
-        /* Mejoras específicas para móviles */
-        @media (max-width: 640px) {
-          .safe-area-top {
-            padding-top: max(env(safe-area-inset-top, 20px), 20px);
-          }
-          
-          .safe-area-bottom {
-            padding-bottom: max(env(safe-area-inset-bottom, 40px), 40px);
-          }
-          
-          body {
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-          }
-        }
-      `}</style>
 
-      {/* Header */}
-      <header 
-        className={`absolute top-0 left-0 right-0 p-4 md:p-6 lg:p-8 pt-8 md:pt-8 lg:pt-10 transition-all duration-400 safe-area-top ${
-          expandedProject ? 'opacity-0 -translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'
-        }`}
-        style={{ zIndex: expandedProject ? 10 : 50 }}
-      >
-        <div className="flex items-center justify-between w-full">
-          <img 
-            src="/logo.svg" 
-            alt="B4D Logo" 
-            className="w-auto h-10 md:h-10 lg:h-12"
-          />
+    const headerVariants = {
+        hidden: { opacity: 0, y: -30 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut", delay: 0.3 } },
+        exit: { opacity: 0, y: -30, transition: { duration: 0.3 } }
+    };
 
-          {/* Botón de contacto */}
-          <button
-            onClick={handleContactClick}
-            className={`flex items-center gap-2 px-4 py-2 md:px-5 md:py-3 lg:px-6 lg:py-3 bg-transparent border border-white/30 rounded-full text-white hover:bg-white/10 transition-all duration-300 backdrop-blur-sm text-sm md:text-base hover:scale-105 active:scale-95 ${isLoaded ? 'animate-slide-up' : ''}`}
-            style={{ animationDelay: '0.2s' }}
-          >
-            <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
-            <span className="text-sm md:text-base">Contacto</span>
-          </button>
-        </div>
-      </header>
+    return (
+        <>
+            <style jsx global>{`
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-      {/* Texto principal */}
-      <div 
-        className={`absolute top-20 md:top-28 lg:top-32 left-4 right-4 md:left-6 md:right-auto lg:left-8 xl:left-12 max-w-full md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl transition-all duration-400 safe-area-top ${
-          expandedProject ? 'opacity-0 -translate-y-8 pointer-events-none' : 'opacity-100 translate-y-0'
-        }`}
-        style={{ zIndex: expandedProject ? 10 : 40 }}
-      >
-        <div className={`text-white ${isLoaded ? 'animate-slide-up' : ''}`} style={{ animationDelay: '0.4s' }}>
-          <h1 className="text-3xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-light mb-4 leading-tight"
-              style={{ textShadow: '0 2px 4px rgba(0,0,0,0.4)' }}>
-            Creamos <span className="font-bold">productos</span> y{' '}
-            <span className="font-bold">experiencias</span> inmersivas
-            extraordinarias
-          </h1>
-        </div>
-      </div>
+                body {
+                  background-color: #000;
+                  color: ${PRIMARY_TEXT_COLOR};
+                  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+                  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                  overscroll-behavior-y: contain;
+                  overflow: hidden; /* Added from error context */
+                }
+                .lucide { color: ${PRIMARY_TEXT_COLOR}; }
+                .text-gradient-blur {
+                  background-image: linear-gradient(to bottom,
+                    ${PRIMARY_TEXT_COLOR} 0%,
+                    ${PRIMARY_TEXT_COLOR} 1.2em, /* Solid for first line */
+                    rgba(216, 236, 241, 0.5) 1.8em, /* Stronger fade start on 2nd line */
+                    rgba(216, 236, 241, 0.3) 2.4em,
+                    rgba(216, 236, 241, 0.1) 3.0em,
+                    rgba(216, 236, 241, 0) 3.6em /* Fully transparent sooner */
+                  );
+                  -webkit-background-clip: text; background-clip: text;
+                  -webkit-text-fill-color: transparent; text-fill-color: transparent;
+                  filter: blur(0.6px); /* Adjusted blur */
+                }
+                /* .slider-dots class is no longer needed as dots are directly styled within the flex container */
+                .slider-dot {
+                  width: 10px;
+                  height: 10px;
+                  border-radius: 50%;
+                  background-color: rgba(216, 236, 241, 0.3);
+                  cursor: pointer;
+                  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                .slider-dot.active {
+                  background-color: ${PRIMARY_TEXT_COLOR};
+                  transform: scale(1.3);
+                }
+                .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(216, 236, 241, 0.3); border-radius: 3px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+                .pt-safe-top-modal { padding-top: calc(env(safe-area-inset-top) + 1rem); }
+            `}</style>
 
-      {/* Carrusel de videos */}
-      <VideoCarousel 
-        expandedProject={expandedProject}
-        onExpandChange={setExpandedProject}
-      />
-    </>
-  );
+            <AnimatePresence mode="wait">
+                {showSplashScreen && <SplashScreen key="splash" onFinished={handleSplashFinished} videoUrl={projects?.[0]?.videoUrl} />}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {!showSplashScreen && (
+                    <>
+                        <motion.header key="app-header" className="fixed top-0 left-0 right-0 p-4 md:p-6 lg:p-8 pt-[calc(env(safe-area-inset-top,0px)+1rem)] z-50" variants={headerVariants} initial="hidden" animate={isAppLoaded && !expandedProject ? "visible" : "exit"}>
+                            <div className="flex items-center justify-between w-full max-w-screen-2xl mx-auto px-2">
+                                <img src="/logo.svg" alt="B4D Logo" className="w-auto h-10 md:h-12 filter drop-shadow-lg" />
+                                <motion.button onClick={handleContactClick} className="flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 bg-black/30 border rounded-full backdrop-blur-sm text-sm md:text-base" style={{ color: PRIMARY_TEXT_COLOR, borderColor: `${PRIMARY_TEXT_COLOR}50` }} whileHover={{ backgroundColor: `${PRIMARY_TEXT_COLOR}20`, scale: 1.05, borderColor: `${PRIMARY_TEXT_COLOR}80`}} whileTap={{ scale: 0.95 }} transition={{ duration: 0.2 }}>
+                                    <MessageCircle className="w-4 h-4 md:w-5 md:h-5" /><span>Contacto</span>
+                                </motion.button>
+                            </div>
+                        </motion.header>
+                        <motion.div key="app-content" initial={{ opacity: 0 }} animate={{ opacity: isAppLoaded ? 1 : 0, transition: { duration: 0.8, delay: 0.1 } }} className="w-full h-screen">
+                           {projects.length > 0 && <VideoCarousel expandedProject={expandedProject} onExpandChange={handleExpandProjectChange} primaryTextColor={PRIMARY_TEXT_COLOR} />}
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+        </>
+    );
 };
 
 export default App;
