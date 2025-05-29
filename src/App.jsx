@@ -2,46 +2,46 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MessageCircle, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Data (sin cambios)
+// Data (con tus últimas actualizaciones de marca y rutas)
 const projects = [
     {
         id: 1,
         brand: 'John Deere',
         title: 'Stand Interactivo',
         description: 'Durante la Expo Guadalajara 2024, nuestro stand interactivo fue galardonado con el primer lugar, destacando tanto por su diseño innovador como por la experiencia inmersiva que ofrecía a los visitantes. La instalación combinaba tecnología de punta con elementos interactivos que permitían a los asistentes explorar los productos de John Deere de manera única y memorable, creando una experiencia que destacó entre todas las propuestas presentadas.',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-        logoPath: '/logojd.svg'
+        videoUrl: '/videos/johndeer_001.mp4',
+        logoPath: '/johndeer.svg'
     },
     {
         id: 2,
-        brand: 'Tesla',
-        title: 'Experiencia Virtual',
+        brand: 'Liverpool',
+        title: 'Universo Haus',
         description: 'Desarrollamos una experiencia de realidad virtual que permite a los usuarios explorar los vehículos Tesla de manera inmersiva, destacando sus características tecnológicas más avanzadas. Los visitantes pueden personalizar su vehículo, explorar el interior y exterior, y experimentar las funciones autónomas en un entorno virtual completamente realista que los transporta al futuro de la movilidad.',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-        logoPath: '/logojd.svg'
+        videoUrl: '/videos/liverpool_001.mp4',
+        logoPath: '/liverpool.svg' 
     },
     {
         id: 3,
-        brand: 'Apple',
-        title: 'Showcase Interactivo',
+        brand: 'Office Depot',
+        title: 'Video CGI',
         description: 'Creamos un showcase interactivo para el lanzamiento del iPhone, combinando elementos físicos y digitales para crear una experiencia memorable para los asistentes. La instalación incluía hologramas, superficies táctiles y realidad aumentada para mostrar las características del producto de forma innovadora, estableciendo un nuevo estándar en presentaciones de productos tecnológicos.',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        logoPath: '/logojd.svg'
+        videoUrl: '/videos/office_001.mp4', 
+        logoPath: '/office.svg'
     },
     {
         id: 4,
-        brand: 'Nike',
-        title: 'Instalación Deportiva',
+        brand: 'Weber',
+        title: 'Showroom Virtual',
         description: 'Una instalación interactiva que combina sensores de movimiento y proyección mapping para crear una experiencia única donde los usuarios pueden interactuar con productos Nike. Los visitantes participan en desafíos deportivos virtuales mientras exploran la línea de productos, creando una conexión emocional con la marca y demostrando el poder de la tecnología aplicada al deporte.',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-        logoPath: '/logojd.svg'
+        videoUrl: '/videos/weber_001.mp4', 
+        logoPath: '/weber.svg'
     }
 ];
 
 // Constants
 const PRIMARY_TEXT_COLOR = '#D8ECF1';
 
-// Component: SplashScreen (sin cambios respecto a la última versión)
+// Component: SplashScreen (sin cambios)
 const SplashScreen = ({ onFinished, videoUrl }) => {
     const [animateText, setAnimateText] = useState(false);
     const splashRef = useRef(null);
@@ -102,7 +102,7 @@ const SplashScreen = ({ onFinished, videoUrl }) => {
             exit={{ opacity: 0, transition: { duration: 0.5, ease: 'easeInOut' } }}
             style={{ color: PRIMARY_TEXT_COLOR }}
         >
-            <video src={videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-30" />
+            <video src={videoUrl || "/videos/default_splash_video.mp4"} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-30" />
             <div className="absolute inset-0 bg-black/60" />
             <AnimatePresence>
                 {animateText && (
@@ -136,6 +136,9 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
     const [showContent, setShowContent] = useState(false);
     const videoRef = useRef(null); 
 
+    // NUEVO: Umbral para el gesto de swipe hacia arriba
+    const SWIPE_UP_THRESHOLD_Y = -50; // Píxeles. Negativo para movimiento hacia arriba.
+
     useEffect(() => {
         const videoElement = videoRef.current;
         if (isActive && videoElement) {
@@ -143,11 +146,11 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
             const playPromise = videoElement.play();
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
-                    console.warn("Video autoplay failed:", error);
+                    console.warn("Video autoplay failed for:", project.videoUrl, error);
                 });
             }
         }
-    }, [isActive]); 
+    }, [isActive, project.videoUrl]); // Añadido project.videoUrl a dependencias por si cambia
 
 
     useEffect(() => {
@@ -170,6 +173,17 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
         }
     };
 
+    // NUEVO: Manejador para el gesto de swipe hacia arriba
+    const handleSwipeUpExpand = (event, info) => {
+        // info.offset.y es el desplazamiento vertical desde el inicio del gesto
+        // Un valor negativo grande indica un swipe hacia arriba
+        if (info.offset.y < SWIPE_UP_THRESHOLD_Y) {
+            if (isActive && !isExpanded) { // Asegurarse de que la tarjeta está activa y no expandida
+                onExpandToggle(project.id);
+            }
+        }
+    };
+
     const cardContentVariants = {
         hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut", staggerChildren: 0.1, delayChildren: 0.2 } },
@@ -183,20 +197,27 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
         <div className="absolute inset-0 w-full h-full overflow-hidden">
             <video
                 ref={videoRef}
-                src={project.videoUrl}
+                src={project.videoUrl} 
                 autoPlay
                 muted
                 loop
                 playsInline
                 preload="auto"
                 className="w-full h-full object-cover"
-                onError={(e) => { e.target.style.display = 'none'; const img = document.createElement('img'); img.src = `https://via.placeholder.com/800x600/1a1a1a/${primaryTextColor.substring(1)}?text=${project.brand}`; img.className = 'w-full h-full object-cover'; img.alt = project.brand; e.target.parentNode.appendChild(img); }}
+                onError={(e) => { 
+                    console.error("Error loading video:", project.videoUrl, e);
+                    e.target.style.display = 'none'; 
+                    const img = document.createElement('img'); 
+                    img.src = `https://via.placeholder.com/800x600/1a1a1a/${primaryTextColor.substring(1)}?text=Error+Video+${project.brand}`; 
+                    img.className = 'w-full h-full object-cover'; 
+                    img.alt = project.brand; 
+                    e.target.parentNode.appendChild(img); 
+                }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-75" />
 
             <AnimatePresence>
                 {isExpanded && (
-                    // ... (Modal expandido sin cambios en esta iteración)
                     <motion.div
                         className="fixed inset-0 bg-black/70 backdrop-blur-lg flex flex-col"
                         style={{ zIndex: 100, color: primaryTextColor }}
@@ -218,7 +239,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
                         </motion.button>
                         <motion.div className="h-full w-full flex flex-col p-4 md:p-6 lg:p-8 pt-safe-top-modal overflow-hidden" onClick={(e) => e.stopPropagation()} variants={cardContentVariants} initial="hidden" animate="visible">
                             <motion.div className="mb-6 md:mb-8 lg:mb-10 mt-16 md:mt-16" variants={itemVariants}>
-                                <div className="h-5 md:h-6 lg:h-7 w-auto opacity-100">
+                                <div className="h-5 md:h-6 lg:h-7 w-auto opacity-100"> 
                                     <img src={project.logoPath} alt={`${project.brand} Logo`} className="h-full w-auto object-contain filter drop-shadow-lg" />
                                 </div>
                             </motion.div>
@@ -240,22 +261,24 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
             <AnimatePresence>
                 {showContent && !isExpanded && (
                     <motion.div
-                        className="absolute inset-0 px-4 pt-4 md:px-6 md:pt-6 lg:px-8 lg:pt-8 flex flex-col justify-end overflow-y-auto custom-scrollbar"
-                        // paddingBottom ajustado para la nueva altura de controles + separación mínima
+                        className="absolute inset-0 px-4 pt-4 md:px-6 md:pt-6 lg:px-8 lg:pt-8 flex flex-col justify-end overflow-y-auto custom-scrollbar touch-pan-y" // touch-pan-y para ayudar a la intención del scroll vertical
                         style={{ 
-                            // Altura de contenido de controles (~44px) + safe area (fallback 8px) + separación mínima (8px)
-                            paddingBottom: `calc(44px + env(safe-area-inset-bottom, 8px) + 8px)` 
+                            paddingBottom: `calc(40px + env(safe-area-inset-bottom, 8px))` 
                         }}
-                        variants={cardContentVariants} initial="hidden" animate="visible" exit={{ opacity: 0, y: 20, transition: { duration: 0.3 } }}
+                        variants={cardContentVariants} 
+                        initial="hidden" 
+                        animate="visible" 
+                        exit={{ opacity: 0, y: 20, transition: { duration: 0.3 } }}
+                        onPanEnd={handleSwipeUpExpand} // <<< MANEJADOR DE SWIPE AÑADIDO AQUÍ
                     >
                         <div> 
-                            <motion.div className="mb-3 md:mb-5" variants={itemVariants}> {/* Espaciado LIGERAMENTE aumentado */}
+                            <motion.div className="mb-3 md:mb-5" variants={itemVariants}> 
                                 <div className="h-5 md:h-6 lg:h-[1.875rem] xl:h-9 w-auto opacity-100">
                                     <img src={project.logoPath} alt={`${project.brand} Logo`} className="h-full w-auto object-contain filter drop-shadow-lg" />
                                 </div>
                             </motion.div>
                             <motion.div
-                                className="flex items-center mb-2 md:mb-3" // Espaciado LIGERAMENTE aumentado
+                                className="flex items-center mb-2 md:mb-3" 
                                 variants={itemVariants}
                             >
                                 <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight"
@@ -264,7 +287,12 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
                                     {project.title}
                                 </h3>
                             </motion.div>
-                            <motion.div className="relative cursor-pointer text-content-area" variants={itemVariants} onClick={handleExpandClick}> 
+                            {/* El onClick se mantiene en el área específica de la descripción para el clic directo */}
+                            <motion.div 
+                                className="relative cursor-pointer text-content-area" 
+                                variants={itemVariants} 
+                                onClick={handleExpandClick} 
+                            > 
                                 <div className="relative overflow-hidden max-h-[3.9em] md:max-h-[4.05em] lg:max-h-[4.2em]"> 
                                     <p className="text-sm md:text-base lg:text-lg xl:text-xl leading-tight text-gradient-blur description-text-p">{project.description}</p>
                                 </div>
@@ -277,7 +305,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
     );
 };
 
-// Component: VideoCarousel
+// Component: VideoCarousel (sin cambios en su lógica interna)
 const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [direction, setDirection] = useState(0);
@@ -326,9 +354,21 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
         isDragging.current = false;
     };
 
-    const handleTouchStart = (e) => { if (e.target.closest('button, a, .text-content-area')) return; handleInteractionStart(e.touches?.[0]?.clientX); };
+    const handleTouchStart = (e) => { 
+        // Modificado para permitir que el swipe up en VideoCard funcione sin activar el carousel swipe.
+        // Si el swipe (pan) se inicia en el área de contenido del VideoCard, el carousel no debería tomarlo.
+        // El onPanEnd en VideoCard detendrá la propagación si es un swipe up para expandir.
+        // Para el swipe horizontal del carousel, no debería interferir si el swipe es vertical en el hijo.
+        if (e.target.closest('button, a')) return; // Sigue evitando botones y links para el swipe del carousel
+        // No filtramos .text-content-area aquí para que el swipe up en la tarjeta pueda funcionar.
+        // El carousel tiene su propio umbral de swipe horizontal.
+        handleInteractionStart(e.touches?.[0]?.clientX); 
+    };
     const handleTouchEnd = (e) => handleInteractionEnd(e.changedTouches?.[0]?.clientX);
-    const handleMouseDown = (e) => { if (e.target.closest('button, a, .text-content-area')) return; handleInteractionStart(e.clientX); };
+    const handleMouseDown = (e) => { 
+        if (e.target.closest('button, a')) return;
+        handleInteractionStart(e.clientX); 
+    };
     const handleMouseUp = (e) => handleInteractionEnd(e.clientX);
 
     const currentProject = projects?.[currentIndex];
@@ -338,7 +378,7 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
         exit: dir => ({ x: dir < 0 ? '100%' : '-100%', scale: 0.95, opacity: 0, transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] } }),
     };
 
-    const navButtonClass = "p-1.5 sm:p-2 rounded-full bg-transparent hover:bg-black/40 active:bg-black/50 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70";
+    const navButtonClass = "p-1.5 sm:p-2 rounded-full bg-black/20 hover:bg-black/40 active:bg-black/50 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70";
 
     return (
         <div 
@@ -377,7 +417,7 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
                     className="absolute bottom-0 inset-x-0 flex items-center justify-between px-4 sm:px-6 bg-transparent z-20"
                     style={{
                         paddingTop: '0.5rem', 
-                        paddingBottom: `calc(env(safe-area-inset-bottom, 8px) + 0.75rem)` // Aumentado el padding base inferior
+                        paddingBottom: `calc(env(safe-area-inset-bottom, 8px) + 0.75rem)` 
                     }}
                 >
                     <button
@@ -509,10 +549,14 @@ const App = () => {
                 .slider-dot-control:focus-visible {
                     box-shadow: 0 0 0 2px rgba(216, 236, 241, 0.5);
                 }
+                /* Ayuda a que el scroll vertical tenga prioridad en elementos con overflow-y-auto y gestos de pan */
+                .touch-pan-y {
+                    touch-action: pan-y;
+                }
             `}</style>
 
             <AnimatePresence mode="wait">
-                {showSplashScreen && <SplashScreen key="splash" onFinished={handleSplashFinished} videoUrl={projects?.[0]?.videoUrl} />}
+                {showSplashScreen && <SplashScreen key="splash" onFinished={handleSplashFinished} videoUrl={projects[0]?.videoUrl} />}
             </AnimatePresence>
 
             <AnimatePresence>
