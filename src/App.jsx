@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MessageCircle, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Data
+// Data (sin cambios)
 const projects = [
     {
         id: 1,
@@ -40,8 +40,10 @@ const projects = [
 
 // Constants
 const PRIMARY_TEXT_COLOR = '#D8ECF1';
+const CONTROLS_AREA_HEIGHT_CLASS = 'h-[76px]'; // Altura para el área de controles (ej: 4.75rem o 76px)
+const CONTROLS_AREA_HEIGHT_PX = 76; // Valor numérico para cálculos si es necesario
 
-// Component: SplashScreen
+// Component: SplashScreen (sin cambios)
 const SplashScreen = ({ onFinished, videoUrl }) => {
     const [animateText, setAnimateText] = useState(false);
     const splashRef = useRef(null);
@@ -113,6 +115,23 @@ const SplashScreen = ({ onFinished, videoUrl }) => {
 // Component: VideoCard
 const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextColor }) => {
     const [showContent, setShowContent] = useState(false);
+    const videoRef = useRef(null); // Ref para el elemento video
+
+    useEffect(() => {
+        const videoElement = videoRef.current;
+        if (isActive && videoElement) {
+            // Intento de reproducción programática para autoplay en móviles
+            videoElement.muted = true; // Asegurar que esté silenciado
+            const playPromise = videoElement.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.warn("Video autoplay failed:", error);
+                    // Autoplay fue prevenido. El navegador podría mostrar controles.
+                });
+            }
+        }
+    }, [isActive]); // Dependencia en isActive para re-intentar si la tarjeta se vuelve activa
+
 
     useEffect(() => {
         if (isActive) {
@@ -145,11 +164,22 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
 
     return (
         <div className="absolute inset-0 w-full h-full overflow-hidden">
-            <video src={project.videoUrl} autoPlay muted loop playsInline className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; const img = document.createElement('img'); img.src = `https://via.placeholder.com/800x600/1a1a1a/${primaryTextColor.substring(1)}?text=${project.brand}`; img.className = 'w-full h-full object-cover'; img.alt = project.brand; e.target.parentNode.appendChild(img); }} />
+            <video
+                ref={videoRef}
+                src={project.videoUrl}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto" // Sugerir precarga
+                className="w-full h-full object-cover"
+                onError={(e) => { e.target.style.display = 'none'; const img = document.createElement('img'); img.src = `https://via.placeholder.com/800x600/1a1a1a/${primaryTextColor.substring(1)}?text=${project.brand}`; img.className = 'w-full h-full object-cover'; img.alt = project.brand; e.target.parentNode.appendChild(img); }}
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
             <AnimatePresence>
                 {isExpanded && (
+                    // Modal expandido (sin cambios significativos en su layout interno)
                     <motion.div
                         className="fixed inset-0 bg-black/70 backdrop-blur-lg flex flex-col"
                         style={{ zIndex: 100, color: primaryTextColor }}
@@ -169,12 +199,11 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
                         >
                             <ChevronDown className="w-7 h-7 md:w-8 md:h-8" />
                         </motion.button>
-
                         <motion.div className="h-full w-full flex flex-col p-4 md:p-6 lg:p-8 pt-safe-top-modal overflow-hidden" onClick={(e) => e.stopPropagation()} variants={cardContentVariants} initial="hidden" animate="visible">
                             <motion.div className="mb-6 md:mb-8 lg:mb-10 mt-16 md:mt-16" variants={itemVariants}>
                                 <div className="h-10 md:h-12 lg:h-14 w-auto opacity-90"><img src={project.logoPath} alt={`${project.brand} Logo`} className="h-full w-auto object-contain filter drop-shadow-lg" /></div>
                             </motion.div>
-                            <motion.h3 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 md:mb-8 lg:mb-10" style={{ textShadow: '0 2px 6px rgba(0,0,0,0.5)' }} variants={itemVariants}>{project.title}</motion.h3>
+                            <motion.h3 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-6 md:mb-8 lg:mb-10" style={{ textShadow: '0 2px 6px rgba(0,0,0,0.5)' }} variants={itemVariants}>{project.title}</motion.h3>
                             <motion.div className="flex-1 overflow-hidden" variants={itemVariants}>
                                 <div className="h-full overflow-y-auto pr-2 custom-scrollbar pb-12"><p className="text-base md:text-lg lg:text-xl xl:text-2xl leading-relaxed" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}>{project.description}</p></div>
                             </motion.div>
@@ -185,30 +214,35 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
 
             <AnimatePresence>
                 {showContent && !isExpanded && (
+                    // Contenido no expandido del slide (logo, título, descripción)
+                    // Este div ahora es absolute inset-0, su padre (el slide) se encarga de limitar su altura
+                    // Se añade overflow-y-auto para que el contenido sea desplazable si es más alto que el área.
                     <motion.div
-                        className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 pb-[calc(env(safe-area-inset-bottom,20px)+20px)] text-inherit"
+                        className="absolute inset-0 p-4 md:p-6 lg:p-8 flex flex-col justify-end overflow-y-auto custom-scrollbar"
                         variants={cardContentVariants} initial="hidden" animate="visible" exit={{ opacity: 0, y: 20, transition: { duration: 0.3 } }}
                     >
-                        <motion.div className="mb-4 md:mb-5 lg:mb-6" variants={itemVariants}>
-                             <div className="h-7 md:h-8 lg:h-[1.875rem] xl:h-9 w-auto opacity-90">
-                                <img src={project.logoPath} alt={`${project.brand} Logo`} className="h-full w-auto object-contain filter drop-shadow-lg" />
-                            </div>
-                        </motion.div>
-                        <motion.div
-                            className="h-8 md:h-10 lg:h-12 flex items-center mb-3 md:mb-4 lg:mb-5"
-                            variants={itemVariants}
-                        >
-                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight"
-                                style={{ textShadow: '0 2px 5px rgba(0,0,0,0.5)' }}
+                        <div> {/* Contenedor extra para asegurar que el padding inferior funcione con flex-end */}
+                            <motion.div className="mb-4 md:mb-6" variants={itemVariants}> {/* Reducido margen inferior para más espacio */}
+                                <div className="h-5 md:h-6 lg:h-[1.875rem] xl:h-9 w-auto opacity-90">
+                                    <img src={project.logoPath} alt={`${project.brand} Logo`} className="h-full w-auto object-contain filter drop-shadow-lg" />
+                                </div>
+                            </motion.div>
+                            <motion.div
+                                className="flex items-center mb-2 md:mb-3" // Reducido margen inferior
+                                variants={itemVariants}
                             >
-                                {project.title}
-                            </h3>
-                        </motion.div>
-                        <motion.div className="relative cursor-pointer text-content-area mb-0" variants={itemVariants} onClick={handleExpandClick}>
-                            <div className="relative overflow-hidden max-h-[3.9em] md:max-h-[4.05em] lg:max-h-[4.2em]">
-                                <p className="text-sm md:text-base lg:text-lg xl:text-xl leading-tight text-gradient-blur description-text-p">{project.description}</p>
-                            </div>
-                        </motion.div>
+                                <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight"
+                                    style={{ textShadow: '0 2px 5px rgba(0,0,0,0.5)' }}
+                                >
+                                    {project.title}
+                                </h3>
+                            </motion.div>
+                            <motion.div className="relative cursor-pointer text-content-area" variants={itemVariants} onClick={handleExpandClick}> {/* mb-0 eliminado, el padding del padre maneja el espacio */}
+                                <div className="relative overflow-hidden max-h-[3.9em] md:max-h-[4.05em] lg:max-h-[4.2em]"> {/* Ajustar max-h según necesidad */}
+                                    <p className="text-sm md:text-base lg:text-lg xl:text-xl leading-tight text-gradient-blur description-text-p">{project.description}</p>
+                                </div>
+                            </motion.div>
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -244,10 +278,10 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
         }, 9000);
         return () => clearTimeout(autoPlayTimeoutRef.current);
     }, [currentIndex, expandedProject, projects.length, changeSlide]);
-
+    
     const handleInteractionStart = (clientX) => {
         if (expandedProject || isTransitioningRef.current) return false;
-        if (clientX === undefined || clientX === null) return false;
+        if (clientX === undefined || clientX === null) return false; 
         isDragging.current = true;
         dragStartX.current = clientX;
         clearTimeout(autoPlayTimeoutRef.current);
@@ -255,7 +289,7 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
     };
     const handleInteractionEnd = (clientX) => {
         if (!isDragging.current || expandedProject || isTransitioningRef.current) return;
-        if (clientX === undefined || clientX === null) return;
+        if (clientX === undefined || clientX === null) return; 
         const diff = dragStartX.current - clientX;
         const threshold = 50;
         if (Math.abs(diff) > threshold) {
@@ -277,37 +311,64 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
         exit: dir => ({ x: dir < 0 ? '100%' : '-100%', scale: 0.95, opacity: 0, transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] } }),
     };
 
-    const navButtonClass = "p-2 rounded-full bg-black/20 hover:bg-black/40 active:bg-black/50 transition-colors duration-150";
+    const navButtonClass = "p-2 rounded-full bg-black/30 hover:bg-black/50 active:bg-black/60 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70";
 
     return (
-        <div className="relative w-full h-screen overflow-hidden bg-black" ref={carouselRef} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseLeave={() => isDragging.current = false}>
-            <AnimatePresence initial={false} custom={direction} mode="popLayout">
-                <motion.div key={currentIndex} custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="w-full h-full absolute">
-                    {currentProject && <VideoCard project={currentProject} isActive={true} isExpanded={expandedProject === currentProject.id} onExpandToggle={onExpandChange} primaryTextColor={primaryTextColor} />}
-                </motion.div>
-            </AnimatePresence>
+        // Contenedor principal del carrusel: flex vertical para separar video y controles
+        <div className="relative w-full h-screen overflow-hidden bg-black flex flex-col" ref={carouselRef} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseLeave={() => isDragging.current = false}>
+            {/* Área del Video/Contenido del Slide: toma el espacio restante */}
+            <div className="flex-1 relative overflow-hidden">
+                <AnimatePresence initial={false} custom={direction} mode="popLayout">
+                    <motion.div
+                        key={currentIndex}
+                        custom={direction}
+                        variants={slideVariants}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        className="w-full h-full absolute" // VideoCard se expandirá para llenar esta área
+                    >
+                        {currentProject && <VideoCard project={currentProject} isActive={true} isExpanded={expandedProject === currentProject.id} onExpandToggle={onExpandChange} primaryTextColor={primaryTextColor} />}
+                    </motion.div>
+                </AnimatePresence>
+            </div>
 
+            {/* Área de Controles: fija en la parte inferior */}
             {!expandedProject && (
-                <>
+                <div 
+                    className={`w-full ${CONTROLS_AREA_HEIGHT_CLASS} flex items-center justify-between px-4 sm:px-6 bg-gradient-to-t from-black/80 via-black/50 to-transparent z-20`}
+                    style={{ paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + 1rem)`}} // Espacio para la barra de inicio en iOS + padding
+                >
                     <button
                         onClick={() => { if (!isTransitioningRef.current) changeSlide((currentIndex - 1 + projects.length) % projects.length, -1); }}
-                        className={`${navButtonClass} absolute top-1/2 -translate-y-1/2 left-3 md:left-5 z-30`}
-                        aria-label="Anterior Caso de Éxito"
+                        className={navButtonClass}
+                        aria-label="Anterior"
                     >
                         <ChevronLeft size={28} style={{ color: primaryTextColor }} />
                     </button>
+                    <div className="flex space-x-2.5">
+                        {projects.map((_, index) => (
+                            <button
+                                key={index}
+                                aria-label={`Ver slide ${index + 1}`}
+                                className={`slider-dot-control ${currentIndex === index ? 'active' : ''}`}
+                                onClick={() => { if (!isTransitioningRef.current && index !== currentIndex) changeSlide(index, index > currentIndex ? 1 : -1); }}
+                            />
+                        ))}
+                    </div>
                     <button
                         onClick={() => { if (!isTransitioningRef.current) changeSlide((currentIndex + 1) % projects.length, 1); }}
-                        className={`${navButtonClass} absolute top-1/2 -translate-y-1/2 right-3 md:right-5 z-30`}
-                        aria-label="Siguiente Caso de Éxito"
+                        className={navButtonClass}
+                        aria-label="Siguiente"
                     >
                         <ChevronRight size={28} style={{ color: primaryTextColor }} />
                     </button>
-                </>
+                </div>
             )}
         </div>
     );
 };
+
 
 // Component: App (Main)
 const App = () => {
@@ -339,7 +400,6 @@ const App = () => {
 
     return (
         <>
-            {/* CORRECCIÓN: @import movido al inicio del bloque <style jsx global> */}
             <style jsx global>{`
                 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -387,6 +447,22 @@ const App = () => {
                 }
                 .pt-safe-top-modal { 
                   padding-top: calc(env(safe-area-inset-top) + 1rem); 
+                }
+                .slider-dot-control { /* Estilo para los nuevos puntos de control */
+                  width: 10px;
+                  height: 10px;
+                  border-radius: 50%;
+                  background-color: rgba(216, 236, 241, 0.3); /* Usar PRIMARY_TEXT_COLOR con alfa */
+                  cursor: pointer;
+                  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                  outline: none;
+                }
+                .slider-dot-control.active {
+                  background-color: ${PRIMARY_TEXT_COLOR};
+                  transform: scale(1.3);
+                }
+                .slider-dot-control:focus-visible {
+                    box-shadow: 0 0 0 2px rgba(216, 236, 241, 0.5); /* Estilo de foco */
                 }
             `}</style>
 
