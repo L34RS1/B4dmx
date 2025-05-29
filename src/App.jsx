@@ -40,16 +40,15 @@ const projects = [
 
 // Constants
 const PRIMARY_TEXT_COLOR = '#D8ECF1';
-// const CONTROLS_AREA_HEIGHT_CLASS = 'h-[76px]'; // Ya no se usará una altura fija para la barra de controles
 
-// Component: SplashScreen (sin cambios)
+// Component: SplashScreen (sin cambios respecto a la última versión)
 const SplashScreen = ({ onFinished, videoUrl }) => {
     const [animateText, setAnimateText] = useState(false);
     const splashRef = useRef(null);
 
     useEffect(() => {
-        const textTimer = setTimeout(() => setAnimateText(true), 500);
-        const finishTimer = setTimeout(onFinished, 4500);
+        const textTimer = setTimeout(() => setAnimateText(true), 500); 
+        const finishTimer = setTimeout(onFinished, 4500); 
         const handleInteraction = () => onFinished();
 
         const currentRef = splashRef.current;
@@ -71,11 +70,26 @@ const SplashScreen = ({ onFinished, videoUrl }) => {
 
     const containerVariants = {
         hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.15, 
+                delayChildren: 0.5    
+            }
+        },
     };
     const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+        hidden: { opacity: 0, y: 25, scale: 0.98, filter: 'blur(3px)' }, 
+        visible: {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            filter: 'blur(0px)',
+            transition: {
+                duration: 1.2, 
+                ease: [0.16, 1, 0.3, 1], 
+            }
+        },
     };
     const splashText = "Creamos experiencias digitales interactivas e inmersivas.";
     const words = splashText.split(' ');
@@ -92,7 +106,13 @@ const SplashScreen = ({ onFinished, videoUrl }) => {
             <div className="absolute inset-0 bg-black/60" />
             <AnimatePresence>
                 {animateText && (
-                    <motion.h1 className="relative z-10 text-4xl md:text-5xl lg:text-6xl font-light text-center max-w-4xl px-6 leading-tight" variants={containerVariants} initial="hidden" animate="visible" exit={{ opacity: 0 }}>
+                    <motion.h1 
+                        className="relative z-10 text-4xl md:text-5xl lg:text-6xl font-light text-center max-w-3xl px-6 leading-tight"
+                        variants={containerVariants} 
+                        initial="hidden" 
+                        animate="visible" 
+                        exit={{ opacity: 0 }}
+                    >
                         {words.map((word, i) => (
                             <motion.span key={i} variants={itemVariants} style={{ display: 'inline-block', marginRight: '0.6rem' }} className={word.toLowerCase().match(/digitales|interactivas|inmersivas/) ? "font-bold" : ""}>
                                 {word}
@@ -102,7 +122,7 @@ const SplashScreen = ({ onFinished, videoUrl }) => {
                 )}
             </AnimatePresence>
             {animateText && (
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 0.7, y: 0, transition: { delay: words.length * 0.1 + 1, duration: 0.8 } }} className="absolute bottom-16 text-sm flex flex-col items-center" style={{ color: PRIMARY_TEXT_COLOR }}>
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 0.7, y: 0, transition: { delay: words.length * 0.15 + 1.2, duration: 0.8 } }} className="absolute bottom-16 text-sm flex flex-col items-center" style={{ color: PRIMARY_TEXT_COLOR }}>
                     <span>Desliza o haz clic para continuar</span>
                     <ChevronDown className="mt-1 h-5 w-5 animate-bounce" />
                 </motion.div>
@@ -111,8 +131,7 @@ const SplashScreen = ({ onFinished, videoUrl }) => {
     );
 };
 
-
-// Component: VideoCard (sin cambios significativos en su lógica interna, pero su contexto de tamaño cambia)
+// Component: VideoCard
 const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextColor }) => {
     const [showContent, setShowContent] = useState(false);
     const videoRef = useRef(null); 
@@ -173,10 +192,11 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
                 className="w-full h-full object-cover"
                 onError={(e) => { e.target.style.display = 'none'; const img = document.createElement('img'); img.src = `https://via.placeholder.com/800x600/1a1a1a/${primaryTextColor.substring(1)}?text=${project.brand}`; img.className = 'w-full h-full object-cover'; img.alt = project.brand; e.target.parentNode.appendChild(img); }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-75" />
 
             <AnimatePresence>
                 {isExpanded && (
+                    // ... (Modal expandido sin cambios en esta iteración)
                     <motion.div
                         className="fixed inset-0 bg-black/70 backdrop-blur-lg flex flex-col"
                         style={{ zIndex: 100, color: primaryTextColor }}
@@ -198,9 +218,17 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
                         </motion.button>
                         <motion.div className="h-full w-full flex flex-col p-4 md:p-6 lg:p-8 pt-safe-top-modal overflow-hidden" onClick={(e) => e.stopPropagation()} variants={cardContentVariants} initial="hidden" animate="visible">
                             <motion.div className="mb-6 md:mb-8 lg:mb-10 mt-16 md:mt-16" variants={itemVariants}>
-                                <div className="h-10 md:h-12 lg:h-14 w-auto opacity-90"><img src={project.logoPath} alt={`${project.brand} Logo`} className="h-full w-auto object-contain filter drop-shadow-lg" /></div>
+                                <div className="h-5 md:h-6 lg:h-7 w-auto opacity-90">
+                                    <img src={project.logoPath} alt={`${project.brand} Logo`} className="h-full w-auto object-contain filter drop-shadow-lg" />
+                                </div>
                             </motion.div>
-                            <motion.h3 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-6 md:mb-8 lg:mb-10" style={{ textShadow: '0 2px 6px rgba(0,0,0,0.5)' }} variants={itemVariants}>{project.title}</motion.h3>
+                            <motion.h3 
+                                className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 md:mb-8 lg:mb-10" 
+                                style={{ textShadow: '0 2px 6px rgba(0,0,0,0.5)' }} 
+                                variants={itemVariants}
+                            >
+                                {project.title}
+                            </motion.h3>
                             <motion.div className="flex-1 overflow-hidden" variants={itemVariants}>
                                 <div className="h-full overflow-y-auto pr-2 custom-scrollbar pb-12"><p className="text-base md:text-lg lg:text-xl xl:text-2xl leading-relaxed" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}>{project.description}</p></div>
                             </motion.div>
@@ -212,17 +240,22 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
             <AnimatePresence>
                 {showContent && !isExpanded && (
                     <motion.div
-                        className="absolute inset-0 p-4 md:p-6 lg:p-8 flex flex-col justify-end overflow-y-auto custom-scrollbar"
+                        className="absolute inset-0 px-4 pt-4 md:px-6 md:pt-6 lg:px-8 lg:pt-8 flex flex-col justify-end overflow-y-auto custom-scrollbar"
+                        // paddingBottom ajustado para la nueva altura de controles + separación mínima
+                        style={{ 
+                            // Altura de contenido de controles (~44px) + safe area (fallback 8px) + separación mínima (8px)
+                            paddingBottom: `calc(44px + env(safe-area-inset-bottom, 8px) + 8px)` 
+                        }}
                         variants={cardContentVariants} initial="hidden" animate="visible" exit={{ opacity: 0, y: 20, transition: { duration: 0.3 } }}
                     >
-                        <div className="pb-2"> {/* Contenedor para asegurar padding inferior antes del borde del área de scroll */}
-                            <motion.div className="mb-4 md:mb-6" variants={itemVariants}> 
+                        <div> 
+                            <motion.div className="mb-3 md:mb-5" variants={itemVariants}> {/* Espaciado LIGERAMENTE aumentado */}
                                 <div className="h-5 md:h-6 lg:h-[1.875rem] xl:h-9 w-auto opacity-90">
                                     <img src={project.logoPath} alt={`${project.brand} Logo`} className="h-full w-auto object-contain filter drop-shadow-lg" />
                                 </div>
                             </motion.div>
                             <motion.div
-                                className="flex items-center mb-2 md:mb-3" 
+                                className="flex items-center mb-2 md:mb-3" // Espaciado LIGERAMENTE aumentado
                                 variants={itemVariants}
                             >
                                 <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight"
@@ -305,11 +338,11 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
         exit: dir => ({ x: dir < 0 ? '100%' : '-100%', scale: 0.95, opacity: 0, transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] } }),
     };
 
-    const navButtonClass = "p-2 rounded-full bg-black/30 hover:bg-black/50 active:bg-black/60 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70";
+    const navButtonClass = "p-1.5 sm:p-2 rounded-full bg-black/20 hover:bg-black/40 active:bg-black/50 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70";
 
     return (
         <div 
-            className="relative w-full h-[100dvh] overflow-hidden bg-black flex flex-col" // Cambio clave: h-[100dvh]
+            className="relative w-full h-[100dvh] overflow-hidden bg-black"
             ref={carouselRef} 
             onTouchStart={handleTouchStart} 
             onTouchEnd={handleTouchEnd} 
@@ -317,7 +350,7 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
             onMouseUp={handleMouseUp} 
             onMouseLeave={() => isDragging.current = false}
         >
-            <div className="flex-1 relative overflow-hidden"> {/* Área para el contenido del slide */}
+            <div className="absolute inset-0">
                 <AnimatePresence initial={false} custom={direction} mode="popLayout">
                     <motion.div
                         key={currentIndex}
@@ -334,12 +367,17 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
             </div>
 
             {!expandedProject && (
+                <div
+                    className="absolute inset-x-0 bottom-0 h-[40vh] bg-gradient-to-t from-black/85 to-transparent pointer-events-none z-10"
+                />
+            )}
+
+            {!expandedProject && (
                 <div 
-                    className="w-full flex items-center justify-between px-4 sm:px-6 bg-gradient-to-t from-black/80 via-black/50 to-transparent z-20"
-                    // Altura intrínseca basada en padding y contenido. Padding maneja espacio vertical.
+                    className="absolute bottom-0 inset-x-0 flex items-center justify-between px-4 sm:px-6 bg-transparent z-20"
                     style={{
-                        paddingTop: '0.75rem', // 12px
-                        paddingBottom: `calc(env(safe-area-inset-bottom, 8px) + 0.75rem)` // 8px fallback para safe-area + 12px padding base
+                        paddingTop: '0.5rem', 
+                        paddingBottom: `calc(env(safe-area-inset-bottom, 8px) + 0.75rem)` // Aumentado el padding base inferior
                     }}
                 >
                     <button
@@ -347,14 +385,14 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
                         className={navButtonClass}
                         aria-label="Anterior"
                     >
-                        <ChevronLeft size={28} style={{ color: primaryTextColor }} />
+                        <ChevronLeft size={24} style={{ color: primaryTextColor }} /> 
                     </button>
-                    <div className="flex space-x-2.5">
+                    <div className="flex space-x-2"> 
                         {projects.map((_, index) => (
                             <button
                                 key={index}
                                 aria-label={`Ver slide ${index + 1}`}
-                                className={`slider-dot-control ${currentIndex === index ? 'active' : ''}`}
+                                className={`slider-dot-control ${currentIndex === index ? 'active' : ''}`} 
                                 onClick={() => { if (!isTransitioningRef.current && index !== currentIndex) changeSlide(index, index > currentIndex ? 1 : -1); }}
                             />
                         ))}
@@ -364,7 +402,7 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
                         className={navButtonClass}
                         aria-label="Siguiente"
                     >
-                        <ChevronRight size={28} style={{ color: primaryTextColor }} />
+                        <ChevronRight size={24} style={{ color: primaryTextColor }} />
                     </button>
                 </div>
             )}
@@ -372,8 +410,7 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
     );
 };
 
-
-// Component: App (Main)
+// Component: App (Main) y Estilos Globales (sin cambios)
 const App = () => {
     const [expandedProject, setExpandedProject] = useState(null);
     const [showSplashScreen, setShowSplashScreen] = useState(true);
@@ -409,14 +446,12 @@ const App = () => {
                 body {
                   background-color: #000;
                   color: ${PRIMARY_TEXT_COLOR};
-                  /* padding para safe-area-inset global ya no es necesario aquí si el contenedor principal usa 100dvh */
-                  /* y los componentes internos manejan sus propios safe areas si es necesario (como el header o los controles) */
                   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
                   overscroll-behavior-y: contain;
-                  overflow: hidden; /* Evita el scroll en el body */
+                  overflow: hidden; 
                 }
                 html, body {
-                    height: 100%; /* Asegurar que html y body no interfieran con 100dvh */
+                    height: 100%; 
                     margin: 0;
                     padding: 0;
                 }
@@ -458,9 +493,9 @@ const App = () => {
                 .pt-safe-top-modal { 
                   padding-top: calc(env(safe-area-inset-top) + 1rem); 
                 }
-                .slider-dot-control {
-                  width: 10px;
-                  height: 10px;
+                .slider-dot-control { 
+                  width: 8px; 
+                  height: 8px;
                   border-radius: 50%;
                   background-color: rgba(216, 236, 241, 0.3);
                   cursor: pointer;
@@ -502,7 +537,7 @@ const App = () => {
                             key="app-content" 
                             initial={{ opacity: 0 }} 
                             animate={{ opacity: isAppLoaded ? 1 : 0, transition: { duration: 0.8, delay: 0.1 } }} 
-                            className="w-full h-full" /* h-full para que tome el 100dvh de su padre App si App fuera el contenedor directo */
+                            className="w-full h-full"
                         >
                            {projects.length > 0 && <VideoCarousel expandedProject={expandedProject} onExpandChange={handleExpandProjectChange} primaryTextColor={PRIMARY_TEXT_COLOR} />}
                         </motion.div>
