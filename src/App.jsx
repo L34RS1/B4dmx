@@ -174,7 +174,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
                             <motion.div className="mb-6 md:mb-8 lg:mb-10 mt-16 md:mt-16" variants={itemVariants}>
                                 <div className="h-10 md:h-12 lg:h-14 w-auto opacity-90"><img src={project.logoPath} alt={`${project.brand} Logo`} className="h-full w-auto object-contain filter drop-shadow-lg" /></div>
                             </motion.div>
-                            <motion.h3 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-6 md:mb-8 lg:mb-10" style={{ textShadow: '0 2px 6px rgba(0,0,0,0.5)' }} variants={itemVariants}>{project.title}</motion.h3>
+                            <motion.h3 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 md:mb-8 lg:mb-10" style={{ textShadow: '0 2px 6px rgba(0,0,0,0.5)' }} variants={itemVariants}>{project.title}</motion.h3>
                             <motion.div className="flex-1 overflow-hidden" variants={itemVariants}>
                                 <div className="h-full overflow-y-auto pr-2 custom-scrollbar pb-12"><p className="text-base md:text-lg lg:text-xl xl:text-2xl leading-relaxed" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}>{project.description}</p></div>
                             </motion.div>
@@ -186,16 +186,27 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
             <AnimatePresence>
                 {showContent && !isExpanded && (
                     <motion.div
-                        className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 pb-[calc(env(safe-area-inset-bottom,20px)+100px)] text-inherit"
+                        className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8 pb-[calc(env(safe-area-inset-bottom,20px)+20px)] text-inherit"
                         variants={cardContentVariants} initial="hidden" animate="visible" exit={{ opacity: 0, y: 20, transition: { duration: 0.3 } }}
                     >
-                        <motion.div className="mb-8 md:mb-10 lg:mb-12" variants={itemVariants}> {/* Increased margin-bottom */}
-                            <div className="h-8 md:h-10 lg:h-12 w-auto opacity-90"><img src={project.logoPath} alt={`${project.brand} Logo`} className="h-full w-auto object-contain filter drop-shadow-lg" /></div>
+                        <motion.div className="mb-4 md:mb-5 lg:mb-6" variants={itemVariants}>
+                             <div className="h-7 md:h-8 lg:h-[1.875rem] xl:h-9 w-auto opacity-90">
+                                <img src={project.logoPath} alt={`${project.brand} Logo`} className="h-full w-auto object-contain filter drop-shadow-lg" />
+                            </div>
                         </motion.div>
-                        <motion.h3 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-3 md:mb-4 lg:mb-5 leading-tight" style={{ textShadow: '0 2px 5px rgba(0,0,0,0.5)' }} variants={itemVariants}>{project.title}</motion.h3>
+                        <motion.div
+                            className="h-8 md:h-10 lg:h-12 flex items-center mb-3 md:mb-4 lg:mb-5"
+                            variants={itemVariants}
+                        >
+                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight"
+                                style={{ textShadow: '0 2px 5px rgba(0,0,0,0.5)' }}
+                            >
+                                {project.title}
+                            </h3>
+                        </motion.div>
                         <motion.div className="relative cursor-pointer text-content-area mb-0" variants={itemVariants} onClick={handleExpandClick}>
-                            <div className="relative overflow-hidden max-h-[4.2em] md:max-h-[4.5em] lg:max-h-[4.8em]">
-                                <p className="text-sm md:text-base lg:text-lg xl:text-xl leading-[1.35] text-gradient-blur">{project.description}</p>
+                            <div className="relative overflow-hidden max-h-[3.9em] md:max-h-[4.05em] lg:max-h-[4.2em]">
+                                <p className="text-sm md:text-base lg:text-lg xl:text-xl leading-tight text-gradient-blur description-text-p">{project.description}</p>
                             </div>
                         </motion.div>
                     </motion.div>
@@ -236,7 +247,7 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
 
     const handleInteractionStart = (clientX) => {
         if (expandedProject || isTransitioningRef.current) return false;
-        if (clientX === undefined || clientX === null) return false; // Add check for clientX
+        if (clientX === undefined || clientX === null) return false;
         isDragging.current = true;
         dragStartX.current = clientX;
         clearTimeout(autoPlayTimeoutRef.current);
@@ -244,7 +255,7 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
     };
     const handleInteractionEnd = (clientX) => {
         if (!isDragging.current || expandedProject || isTransitioningRef.current) return;
-        if (clientX === undefined || clientX === null) return; // Add check for clientX
+        if (clientX === undefined || clientX === null) return;
         const diff = dragStartX.current - clientX;
         const threshold = 50;
         if (Math.abs(diff) > threshold) {
@@ -266,7 +277,7 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
         exit: dir => ({ x: dir < 0 ? '100%' : '-100%', scale: 0.95, opacity: 0, transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] } }),
     };
 
-    const navButtonClass = "p-2 rounded-full bg-black/20 hover:bg-black/40 active:bg-black/50 transition-colors duration-150"; // Removed absolute, top, -translate-y, z-30 as they are now handled by parent flex container
+    const navButtonClass = "p-2 rounded-full bg-black/20 hover:bg-black/40 active:bg-black/50 transition-colors duration-150";
 
     return (
         <div className="relative w-full h-screen overflow-hidden bg-black" ref={carouselRef} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseLeave={() => isDragging.current = false}>
@@ -277,20 +288,22 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
             </AnimatePresence>
 
             {!expandedProject && (
-                <div className="absolute bottom-[calc(env(safe-area-inset-bottom,0px)+20px)] left-0 right-0 flex items-center justify-between px-3 md:px-5 z-30"> {/* Adjusted padding */}
-                    <button onClick={() => { if (!isTransitioningRef.current) changeSlide((currentIndex - 1 + projects.length) % projects.length, -1); }} className={navButtonClass} aria-label="Anterior Caso de Éxito">
+                <>
+                    <button
+                        onClick={() => { if (!isTransitioningRef.current) changeSlide((currentIndex - 1 + projects.length) % projects.length, -1); }}
+                        className={`${navButtonClass} absolute top-1/2 -translate-y-1/2 left-3 md:left-5 z-30`}
+                        aria-label="Anterior Caso de Éxito"
+                    >
                         <ChevronLeft size={28} style={{ color: primaryTextColor }} />
                     </button>
-                    <div className="flex space-x-3"> {/* This is .slider-dots now */}
-                        {projects.map((_, index) => (
-                            <button key={index} aria-label={`Ver caso de éxito ${index + 1}`} className={`slider-dot ${currentIndex === index ? 'active' : ''}`}
-                                onClick={() => { if (!isTransitioningRef.current && index !== currentIndex) changeSlide(index, index > currentIndex ? 1 : -1); }} />
-                        ))}
-                    </div>
-                    <button onClick={() => { if (!isTransitioningRef.current) changeSlide((currentIndex + 1) % projects.length, 1); }} className={navButtonClass} aria-label="Siguiente Caso de Éxito">
+                    <button
+                        onClick={() => { if (!isTransitioningRef.current) changeSlide((currentIndex + 1) % projects.length, 1); }}
+                        className={`${navButtonClass} absolute top-1/2 -translate-y-1/2 right-3 md:right-5 z-30`}
+                        aria-label="Siguiente Caso de Éxito"
+                    >
                         <ChevronRight size={28} style={{ color: primaryTextColor }} />
                     </button>
-                </div>
+                </>
             )}
         </div>
     );
@@ -326,6 +339,7 @@ const App = () => {
 
     return (
         <>
+            {/* CORRECCIÓN: @import movido al inicio del bloque <style jsx global> */}
             <style jsx global>{`
                 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -335,39 +349,45 @@ const App = () => {
                   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
                   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
                   overscroll-behavior-y: contain;
-                  overflow: hidden; /* Added from error context */
+                  overflow: hidden;
                 }
-                .lucide { color: ${PRIMARY_TEXT_COLOR}; }
-                .text-gradient-blur {
+                .lucide { 
+                  color: ${PRIMARY_TEXT_COLOR}; 
+                }
+                
+                .text-gradient-blur { 
                   background-image: linear-gradient(to bottom,
                     ${PRIMARY_TEXT_COLOR} 0%,
-                    ${PRIMARY_TEXT_COLOR} 1.2em, /* Solid for first line */
-                    rgba(216, 236, 241, 0.5) 1.8em, /* Stronger fade start on 2nd line */
+                    ${PRIMARY_TEXT_COLOR} 1.2em, 
+                    rgba(216, 236, 241, 0.5) 1.8em, 
                     rgba(216, 236, 241, 0.3) 2.4em,
                     rgba(216, 236, 241, 0.1) 3.0em,
-                    rgba(216, 236, 241, 0) 3.6em /* Fully transparent sooner */
+                    rgba(216, 236, 241, 0) 3.6em 
                   );
                   -webkit-background-clip: text; background-clip: text;
                   -webkit-text-fill-color: transparent; text-fill-color: transparent;
-                  filter: blur(0.6px); /* Adjusted blur */
                 }
-                /* .slider-dots class is no longer needed as dots are directly styled within the flex container */
-                .slider-dot {
-                  width: 10px;
-                  height: 10px;
-                  border-radius: 50%;
-                  background-color: rgba(216, 236, 241, 0.3);
-                  cursor: pointer;
-                  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+                .description-text-p {
+                  filter: blur(1px); 
                 }
-                .slider-dot.active {
-                  background-color: ${PRIMARY_TEXT_COLOR};
-                  transform: scale(1.3);
+                .description-text-p::first-line {
+                  filter: none; 
                 }
-                .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(216, 236, 241, 0.3); border-radius: 3px; }
-                .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-                .pt-safe-top-modal { padding-top: calc(env(safe-area-inset-top) + 1rem); }
+                
+                .custom-scrollbar::-webkit-scrollbar { 
+                  width: 6px; 
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb { 
+                  background-color: rgba(216, 236, 241, 0.3); 
+                  border-radius: 3px; 
+                }
+                .custom-scrollbar::-webkit-scrollbar-track { 
+                  background: transparent; 
+                }
+                .pt-safe-top-modal { 
+                  padding-top: calc(env(safe-area-inset-top) + 1rem); 
+                }
             `}</style>
 
             <AnimatePresence mode="wait">
