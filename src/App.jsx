@@ -218,7 +218,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
                         </motion.button>
                         <motion.div className="h-full w-full flex flex-col p-4 md:p-6 lg:p-8 pt-safe-top-modal overflow-hidden" onClick={(e) => e.stopPropagation()} variants={cardContentVariants} initial="hidden" animate="visible">
                             <motion.div className="mb-6 md:mb-8 lg:mb-10 mt-16 md:mt-16" variants={itemVariants}>
-                                <div className="h-5 md:h-6 lg:h-7 w-auto opacity-90">
+                                <div className="h-5 md:h-6 lg:h-7 w-auto opacity-100">
                                     <img src={project.logoPath} alt={`${project.brand} Logo`} className="h-full w-auto object-contain filter drop-shadow-lg" />
                                 </div>
                             </motion.div>
@@ -250,7 +250,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
                     >
                         <div> 
                             <motion.div className="mb-3 md:mb-5" variants={itemVariants}> {/* Espaciado LIGERAMENTE aumentado */}
-                                <div className="h-5 md:h-6 lg:h-[1.875rem] xl:h-9 w-auto opacity-90">
+                                <div className="h-5 md:h-6 lg:h-[1.875rem] xl:h-9 w-auto opacity-100">
                                     <img src={project.logoPath} alt={`${project.brand} Logo`} className="h-full w-auto object-contain filter drop-shadow-lg" />
                                 </div>
                             </motion.div>
@@ -338,7 +338,7 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
         exit: dir => ({ x: dir < 0 ? '100%' : '-100%', scale: 0.95, opacity: 0, transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] } }),
     };
 
-    const navButtonClass = "p-1.5 sm:p-2 rounded-full bg-black/20 hover:bg-black/40 active:bg-black/50 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70";
+    const navButtonClass = "p-1.5 sm:p-2 rounded-full bg-transparent hover:bg-black/40 active:bg-black/50 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70";
 
     return (
         <div 
@@ -385,7 +385,7 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
                         className={navButtonClass}
                         aria-label="Anterior"
                     >
-                        <ChevronLeft size={24} style={{ color: primaryTextColor }} /> 
+                        <ChevronLeft size={20} style={{ color: primaryTextColor }} /> 
                     </button>
                     <div className="flex space-x-2"> 
                         {projects.map((_, index) => (
@@ -402,7 +402,7 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
                         className={navButtonClass}
                         aria-label="Siguiente"
                     >
-                        <ChevronRight size={24} style={{ color: primaryTextColor }} />
+                        <ChevronRight size={20} style={{ color: primaryTextColor }} />
                     </button>
                 </div>
             )}
