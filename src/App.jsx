@@ -40,8 +40,7 @@ const projects = [
 
 // Constants
 const PRIMARY_TEXT_COLOR = '#D8ECF1';
-const CONTROLS_AREA_HEIGHT_CLASS = 'h-[76px]'; // Altura para el área de controles (ej: 4.75rem o 76px)
-const CONTROLS_AREA_HEIGHT_PX = 76; // Valor numérico para cálculos si es necesario
+// const CONTROLS_AREA_HEIGHT_CLASS = 'h-[76px]'; // Ya no se usará una altura fija para la barra de controles
 
 // Component: SplashScreen (sin cambios)
 const SplashScreen = ({ onFinished, videoUrl }) => {
@@ -112,25 +111,24 @@ const SplashScreen = ({ onFinished, videoUrl }) => {
     );
 };
 
-// Component: VideoCard
+
+// Component: VideoCard (sin cambios significativos en su lógica interna, pero su contexto de tamaño cambia)
 const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextColor }) => {
     const [showContent, setShowContent] = useState(false);
-    const videoRef = useRef(null); // Ref para el elemento video
+    const videoRef = useRef(null); 
 
     useEffect(() => {
         const videoElement = videoRef.current;
         if (isActive && videoElement) {
-            // Intento de reproducción programática para autoplay en móviles
-            videoElement.muted = true; // Asegurar que esté silenciado
+            videoElement.muted = true; 
             const playPromise = videoElement.play();
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
                     console.warn("Video autoplay failed:", error);
-                    // Autoplay fue prevenido. El navegador podría mostrar controles.
                 });
             }
         }
-    }, [isActive]); // Dependencia en isActive para re-intentar si la tarjeta se vuelve activa
+    }, [isActive]); 
 
 
     useEffect(() => {
@@ -171,7 +169,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
                 muted
                 loop
                 playsInline
-                preload="auto" // Sugerir precarga
+                preload="auto"
                 className="w-full h-full object-cover"
                 onError={(e) => { e.target.style.display = 'none'; const img = document.createElement('img'); img.src = `https://via.placeholder.com/800x600/1a1a1a/${primaryTextColor.substring(1)}?text=${project.brand}`; img.className = 'w-full h-full object-cover'; img.alt = project.brand; e.target.parentNode.appendChild(img); }}
             />
@@ -179,7 +177,6 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
 
             <AnimatePresence>
                 {isExpanded && (
-                    // Modal expandido (sin cambios significativos en su layout interno)
                     <motion.div
                         className="fixed inset-0 bg-black/70 backdrop-blur-lg flex flex-col"
                         style={{ zIndex: 100, color: primaryTextColor }}
@@ -214,21 +211,18 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
 
             <AnimatePresence>
                 {showContent && !isExpanded && (
-                    // Contenido no expandido del slide (logo, título, descripción)
-                    // Este div ahora es absolute inset-0, su padre (el slide) se encarga de limitar su altura
-                    // Se añade overflow-y-auto para que el contenido sea desplazable si es más alto que el área.
                     <motion.div
                         className="absolute inset-0 p-4 md:p-6 lg:p-8 flex flex-col justify-end overflow-y-auto custom-scrollbar"
                         variants={cardContentVariants} initial="hidden" animate="visible" exit={{ opacity: 0, y: 20, transition: { duration: 0.3 } }}
                     >
-                        <div> {/* Contenedor extra para asegurar que el padding inferior funcione con flex-end */}
-                            <motion.div className="mb-4 md:mb-6" variants={itemVariants}> {/* Reducido margen inferior para más espacio */}
+                        <div className="pb-2"> {/* Contenedor para asegurar padding inferior antes del borde del área de scroll */}
+                            <motion.div className="mb-4 md:mb-6" variants={itemVariants}> 
                                 <div className="h-5 md:h-6 lg:h-[1.875rem] xl:h-9 w-auto opacity-90">
                                     <img src={project.logoPath} alt={`${project.brand} Logo`} className="h-full w-auto object-contain filter drop-shadow-lg" />
                                 </div>
                             </motion.div>
                             <motion.div
-                                className="flex items-center mb-2 md:mb-3" // Reducido margen inferior
+                                className="flex items-center mb-2 md:mb-3" 
                                 variants={itemVariants}
                             >
                                 <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight"
@@ -237,8 +231,8 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
                                     {project.title}
                                 </h3>
                             </motion.div>
-                            <motion.div className="relative cursor-pointer text-content-area" variants={itemVariants} onClick={handleExpandClick}> {/* mb-0 eliminado, el padding del padre maneja el espacio */}
-                                <div className="relative overflow-hidden max-h-[3.9em] md:max-h-[4.05em] lg:max-h-[4.2em]"> {/* Ajustar max-h según necesidad */}
+                            <motion.div className="relative cursor-pointer text-content-area" variants={itemVariants} onClick={handleExpandClick}> 
+                                <div className="relative overflow-hidden max-h-[3.9em] md:max-h-[4.05em] lg:max-h-[4.2em]"> 
                                     <p className="text-sm md:text-base lg:text-lg xl:text-xl leading-tight text-gradient-blur description-text-p">{project.description}</p>
                                 </div>
                             </motion.div>
@@ -314,10 +308,16 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
     const navButtonClass = "p-2 rounded-full bg-black/30 hover:bg-black/50 active:bg-black/60 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70";
 
     return (
-        // Contenedor principal del carrusel: flex vertical para separar video y controles
-        <div className="relative w-full h-screen overflow-hidden bg-black flex flex-col" ref={carouselRef} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseLeave={() => isDragging.current = false}>
-            {/* Área del Video/Contenido del Slide: toma el espacio restante */}
-            <div className="flex-1 relative overflow-hidden">
+        <div 
+            className="relative w-full h-[100dvh] overflow-hidden bg-black flex flex-col" // Cambio clave: h-[100dvh]
+            ref={carouselRef} 
+            onTouchStart={handleTouchStart} 
+            onTouchEnd={handleTouchEnd} 
+            onMouseDown={handleMouseDown} 
+            onMouseUp={handleMouseUp} 
+            onMouseLeave={() => isDragging.current = false}
+        >
+            <div className="flex-1 relative overflow-hidden"> {/* Área para el contenido del slide */}
                 <AnimatePresence initial={false} custom={direction} mode="popLayout">
                     <motion.div
                         key={currentIndex}
@@ -326,18 +326,21 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
                         initial="enter"
                         animate="center"
                         exit="exit"
-                        className="w-full h-full absolute" // VideoCard se expandirá para llenar esta área
+                        className="w-full h-full absolute" 
                     >
                         {currentProject && <VideoCard project={currentProject} isActive={true} isExpanded={expandedProject === currentProject.id} onExpandToggle={onExpandChange} primaryTextColor={primaryTextColor} />}
                     </motion.div>
                 </AnimatePresence>
             </div>
 
-            {/* Área de Controles: fija en la parte inferior */}
             {!expandedProject && (
                 <div 
-                    className={`w-full ${CONTROLS_AREA_HEIGHT_CLASS} flex items-center justify-between px-4 sm:px-6 bg-gradient-to-t from-black/80 via-black/50 to-transparent z-20`}
-                    style={{ paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + 1rem)`}} // Espacio para la barra de inicio en iOS + padding
+                    className="w-full flex items-center justify-between px-4 sm:px-6 bg-gradient-to-t from-black/80 via-black/50 to-transparent z-20"
+                    // Altura intrínseca basada en padding y contenido. Padding maneja espacio vertical.
+                    style={{
+                        paddingTop: '0.75rem', // 12px
+                        paddingBottom: `calc(env(safe-area-inset-bottom, 8px) + 0.75rem)` // 8px fallback para safe-area + 12px padding base
+                    }}
                 >
                     <button
                         onClick={() => { if (!isTransitioningRef.current) changeSlide((currentIndex - 1 + projects.length) % projects.length, -1); }}
@@ -406,11 +409,18 @@ const App = () => {
                 body {
                   background-color: #000;
                   color: ${PRIMARY_TEXT_COLOR};
-                  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+                  /* padding para safe-area-inset global ya no es necesario aquí si el contenedor principal usa 100dvh */
+                  /* y los componentes internos manejan sus propios safe areas si es necesario (como el header o los controles) */
                   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
                   overscroll-behavior-y: contain;
-                  overflow: hidden;
+                  overflow: hidden; /* Evita el scroll en el body */
                 }
+                html, body {
+                    height: 100%; /* Asegurar que html y body no interfieran con 100dvh */
+                    margin: 0;
+                    padding: 0;
+                }
+
                 .lucide { 
                   color: ${PRIMARY_TEXT_COLOR}; 
                 }
@@ -448,11 +458,11 @@ const App = () => {
                 .pt-safe-top-modal { 
                   padding-top: calc(env(safe-area-inset-top) + 1rem); 
                 }
-                .slider-dot-control { /* Estilo para los nuevos puntos de control */
+                .slider-dot-control {
                   width: 10px;
                   height: 10px;
                   border-radius: 50%;
-                  background-color: rgba(216, 236, 241, 0.3); /* Usar PRIMARY_TEXT_COLOR con alfa */
+                  background-color: rgba(216, 236, 241, 0.3);
                   cursor: pointer;
                   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                   outline: none;
@@ -462,7 +472,7 @@ const App = () => {
                   transform: scale(1.3);
                 }
                 .slider-dot-control:focus-visible {
-                    box-shadow: 0 0 0 2px rgba(216, 236, 241, 0.5); /* Estilo de foco */
+                    box-shadow: 0 0 0 2px rgba(216, 236, 241, 0.5);
                 }
             `}</style>
 
@@ -473,7 +483,14 @@ const App = () => {
             <AnimatePresence>
                 {!showSplashScreen && (
                     <>
-                        <motion.header key="app-header" className="fixed top-0 left-0 right-0 p-4 md:p-6 lg:p-8 pt-[calc(env(safe-area-inset-top,0px)+1rem)] z-50" variants={headerVariants} initial="hidden" animate={isAppLoaded && !expandedProject ? "visible" : "exit"}>
+                        <motion.header 
+                            key="app-header" 
+                            className="fixed top-0 left-0 right-0 p-4 md:p-6 lg:p-8 z-50" 
+                            style={{paddingTop: `calc(env(safe-area-inset-top, 0px) + 1rem)`}}
+                            variants={headerVariants} 
+                            initial="hidden" 
+                            animate={isAppLoaded && !expandedProject ? "visible" : "exit"}
+                        >
                             <div className="flex items-center justify-between w-full max-w-screen-2xl mx-auto px-2">
                                 <img src="/logo.svg" alt="B4D Logo" className="w-auto h-10 md:h-12 filter drop-shadow-lg" />
                                 <motion.button onClick={handleContactClick} className="flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 bg-black/30 border rounded-full backdrop-blur-sm text-sm md:text-base" style={{ color: PRIMARY_TEXT_COLOR, borderColor: `${PRIMARY_TEXT_COLOR}50` }} whileHover={{ backgroundColor: `${PRIMARY_TEXT_COLOR}20`, scale: 1.05, borderColor: `${PRIMARY_TEXT_COLOR}80`}} whileTap={{ scale: 0.95 }} transition={{ duration: 0.2 }}>
@@ -481,7 +498,12 @@ const App = () => {
                                 </motion.button>
                             </div>
                         </motion.header>
-                        <motion.div key="app-content" initial={{ opacity: 0 }} animate={{ opacity: isAppLoaded ? 1 : 0, transition: { duration: 0.8, delay: 0.1 } }} className="w-full h-screen">
+                        <motion.div 
+                            key="app-content" 
+                            initial={{ opacity: 0 }} 
+                            animate={{ opacity: isAppLoaded ? 1 : 0, transition: { duration: 0.8, delay: 0.1 } }} 
+                            className="w-full h-full" /* h-full para que tome el 100dvh de su padre App si App fuera el contenedor directo */
+                        >
                            {projects.length > 0 && <VideoCarousel expandedProject={expandedProject} onExpandChange={handleExpandProjectChange} primaryTextColor={PRIMARY_TEXT_COLOR} />}
                         </motion.div>
                     </>
