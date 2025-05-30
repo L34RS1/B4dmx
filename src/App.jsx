@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MessageCircle, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Lottie from "lottie-react";
+// CAMBIO: Ruta de importación actualizada para el Lottie JSON
+import introAnimationData from "./animations/intro.json"; // Asumiendo que creas src/animations/intro.json
 
 // Data (con tus últimas actualizaciones de marca y rutas)
 const projects = [
@@ -39,16 +42,16 @@ const projects = [
 ];
 
 // Constants
-const PRIMARY_TEXT_COLOR = '#D8ECF1';
+const PRIMARY_TEXT_COLOR = '#D8ECF1'; // Esta constante se usa en SplashScreen
 
-// Component: SplashScreen (sin cambios)
+// Component: SplashScreen
 const SplashScreen = ({ onFinished, videoUrl }) => {
     const [animateText, setAnimateText] = useState(false);
     const splashRef = useRef(null);
 
     useEffect(() => {
         const textTimer = setTimeout(() => setAnimateText(true), 500); 
-        const finishTimer = setTimeout(onFinished, 4500); 
+        const finishTimer = setTimeout(onFinished, 6500); 
         const handleInteraction = () => onFinished();
 
         const currentRef = splashRef.current;
@@ -104,25 +107,48 @@ const SplashScreen = ({ onFinished, videoUrl }) => {
         >
             <video src={videoUrl || "/videos/default_splash_video.mp4"} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-30" />
             <div className="absolute inset-0 bg-black/60" />
-            <AnimatePresence>
+
+            <div className="relative z-20 flex flex-col items-center text-center px-6">
                 {animateText && (
-                    <motion.h1 
-                        className="relative z-10 text-4xl md:text-5xl lg:text-6xl font-light text-center max-w-3xl px-6 leading-tight"
-                        variants={containerVariants} 
-                        initial="hidden" 
-                        animate="visible" 
-                        exit={{ opacity: 0 }}
+                    <motion.div
+                        initial={{ opacity: 0, y: -20, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 } }} 
+                        className="mb-6 md:mb-8" 
                     >
-                        {words.map((word, i) => (
-                            <motion.span key={i} variants={itemVariants} style={{ display: 'inline-block', marginRight: '0.6rem' }} className={word.toLowerCase().match(/digitales|interactivas|inmersivas/) ? "font-bold" : ""}>
-                                {word}
-                            </motion.span>
-                        ))}
-                    </motion.h1>
+                        <Lottie 
+                            animationData={introAnimationData} 
+                            loop={true} 
+                            autoPlay={true} 
+                            style={{ width: 150, height: 150 }} 
+                        />
+                    </motion.div>
                 )}
-            </AnimatePresence>
+
+                <AnimatePresence>
+                    {animateText && (
+                        <motion.h1 
+                            className="text-4xl md:text-5xl lg:text-6xl font-light leading-tight max-w-3xl"
+                            variants={containerVariants} 
+                            initial="hidden" 
+                            animate="visible" 
+                            exit={{ opacity: 0 }}
+                        >
+                            {words.map((word, i) => (
+                                <motion.span key={i} variants={itemVariants} style={{ display: 'inline-block', marginRight: '0.6rem' }} className={word.toLowerCase().match(/digitales|interactivas|inmersivas/) ? "font-bold" : ""}>
+                                    {word}
+                                </motion.span>
+                            ))}
+                        </motion.h1>
+                    )}
+                </AnimatePresence>
+            </div>
+            
             {animateText && (
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 0.7, y: 0, transition: { delay: words.length * 0.15 + 1.2, duration: 0.8 } }} className="absolute bottom-16 text-sm flex flex-col items-center" style={{ color: PRIMARY_TEXT_COLOR }}>
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }} 
+                    animate={{ opacity: 0.7, y: 0, transition: { delay: words.length * 0.15 + 1.2, duration: 0.8 } }} 
+                    className="absolute bottom-16 text-sm flex flex-col items-center" style={{ color: PRIMARY_TEXT_COLOR }}
+                >
                     <span>Desliza o haz clic para continuar</span>
                     <ChevronDown className="mt-1 h-5 w-5 animate-bounce" />
                 </motion.div>
@@ -131,13 +157,13 @@ const SplashScreen = ({ onFinished, videoUrl }) => {
     );
 };
 
+// --- El resto de tus componentes (VideoCard, VideoCarousel, App) y estilos globales permanecen igual que en el código que proporcionaste ---
 // Component: VideoCard
 const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextColor }) => {
     const [showContent, setShowContent] = useState(false);
     const videoRef = useRef(null); 
 
-    // NUEVO: Umbral para el gesto de swipe hacia arriba
-    const SWIPE_UP_THRESHOLD_Y = -50; // Píxeles. Negativo para movimiento hacia arriba.
+    const SWIPE_UP_THRESHOLD_Y = -50; 
 
     useEffect(() => {
         const videoElement = videoRef.current;
@@ -150,7 +176,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
                 });
             }
         }
-    }, [isActive, project.videoUrl]); // Añadido project.videoUrl a dependencias por si cambia
+    }, [isActive, project.videoUrl]); 
 
 
     useEffect(() => {
@@ -173,12 +199,9 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
         }
     };
 
-    // NUEVO: Manejador para el gesto de swipe hacia arriba
     const handleSwipeUpExpand = (event, info) => {
-        // info.offset.y es el desplazamiento vertical desde el inicio del gesto
-        // Un valor negativo grande indica un swipe hacia arriba
         if (info.offset.y < SWIPE_UP_THRESHOLD_Y) {
-            if (isActive && !isExpanded) { // Asegurarse de que la tarjeta está activa y no expandida
+            if (isActive && !isExpanded) { 
                 onExpandToggle(project.id);
             }
         }
@@ -261,7 +284,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
             <AnimatePresence>
                 {showContent && !isExpanded && (
                     <motion.div
-                        className="absolute inset-0 px-4 pt-4 md:px-6 md:pt-6 lg:px-8 lg:pt-8 flex flex-col justify-end overflow-y-auto custom-scrollbar touch-pan-y" // touch-pan-y para ayudar a la intención del scroll vertical
+                        className="absolute inset-0 px-4 pt-4 md:px-6 md:pt-6 lg:px-8 lg:pt-8 flex flex-col justify-end overflow-y-auto custom-scrollbar touch-pan-y"
                         style={{ 
                             paddingBottom: `calc(40px + env(safe-area-inset-bottom, 8px))` 
                         }}
@@ -269,7 +292,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
                         initial="hidden" 
                         animate="visible" 
                         exit={{ opacity: 0, y: 20, transition: { duration: 0.3 } }}
-                        onPanEnd={handleSwipeUpExpand} // <<< MANEJADOR DE SWIPE AÑADIDO AQUÍ
+                        onPanEnd={handleSwipeUpExpand}
                     >
                         <div> 
                             <motion.div className="mb-3 md:mb-5" variants={itemVariants}> 
@@ -287,7 +310,6 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
                                     {project.title}
                                 </h3>
                             </motion.div>
-                            {/* El onClick se mantiene en el área específica de la descripción para el clic directo */}
                             <motion.div 
                                 className="relative cursor-pointer text-content-area" 
                                 variants={itemVariants} 
@@ -305,7 +327,7 @@ const VideoCard = ({ project, isActive, isExpanded, onExpandToggle, primaryTextC
     );
 };
 
-// Component: VideoCarousel (sin cambios en su lógica interna)
+// Component: VideoCarousel
 const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [direction, setDirection] = useState(0);
@@ -355,13 +377,7 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
     };
 
     const handleTouchStart = (e) => { 
-        // Modificado para permitir que el swipe up en VideoCard funcione sin activar el carousel swipe.
-        // Si el swipe (pan) se inicia en el área de contenido del VideoCard, el carousel no debería tomarlo.
-        // El onPanEnd en VideoCard detendrá la propagación si es un swipe up para expandir.
-        // Para el swipe horizontal del carousel, no debería interferir si el swipe es vertical en el hijo.
-        if (e.target.closest('button, a')) return; // Sigue evitando botones y links para el swipe del carousel
-        // No filtramos .text-content-area aquí para que el swipe up en la tarjeta pueda funcionar.
-        // El carousel tiene su propio umbral de swipe horizontal.
+        if (e.target.closest('button, a')) return; 
         handleInteractionStart(e.touches?.[0]?.clientX); 
     };
     const handleTouchEnd = (e) => handleInteractionEnd(e.changedTouches?.[0]?.clientX);
@@ -450,7 +466,7 @@ const VideoCarousel = ({ expandedProject, onExpandChange, primaryTextColor }) =>
     );
 };
 
-// Component: App (Main) y Estilos Globales (sin cambios)
+// Component: App (Main) y Estilos Globales
 const App = () => {
     const [expandedProject, setExpandedProject] = useState(null);
     const [showSplashScreen, setShowSplashScreen] = useState(true);
@@ -485,7 +501,7 @@ const App = () => {
 
                 body {
                   background-color: #000;
-                  color: ${PRIMARY_TEXT_COLOR};
+                  color: ${PRIMARY_TEXT_COLOR}; 
                   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
                   overscroll-behavior-y: contain;
                   overflow: hidden; 
@@ -502,7 +518,7 @@ const App = () => {
                 
                 .text-gradient-blur { 
                   background-image: linear-gradient(to bottom,
-                    ${PRIMARY_TEXT_COLOR} 0%,
+                    ${PRIMARY_TEXT_COLOR} 0%, 
                     ${PRIMARY_TEXT_COLOR} 1.2em, 
                     rgba(216, 236, 241, 0.5) 1.8em, 
                     rgba(216, 236, 241, 0.3) 2.4em,
@@ -543,13 +559,12 @@ const App = () => {
                   outline: none;
                 }
                 .slider-dot-control.active {
-                  background-color: ${PRIMARY_TEXT_COLOR};
+                  background-color: ${PRIMARY_TEXT_COLOR}; 
                   transform: scale(1.3);
                 }
                 .slider-dot-control:focus-visible {
                     box-shadow: 0 0 0 2px rgba(216, 236, 241, 0.5);
                 }
-                /* Ayuda a que el scroll vertical tenga prioridad en elementos con overflow-y-auto y gestos de pan */
                 .touch-pan-y {
                     touch-action: pan-y;
                 }
